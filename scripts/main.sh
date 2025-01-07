@@ -52,5 +52,5 @@ ExecuteFunctionAndCheckError BuildStm32CubeProject
 
 
 # # #gnome-terminal -- bash -c 'tmux send-keys -t $session_name:$window_name.0 "echo "arroz"" Enter'
-kill_process_tree $$ # o gazebo cria vários processos descendentes, então para matar todos foi necessário uma árvore
+kill_process_tree $$ # kill the parent process and its descendents
 wait # ## Espera os processos finalizarem
