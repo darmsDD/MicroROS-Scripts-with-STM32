@@ -1,13 +1,20 @@
 # Ignore everything
-*
-!scripts/
-!scripts/**
-!.gitignore
-!LICENSE
-!README.md
-!stm32_workspace/
-# !stm32_workspace/stm32_project
-!stm32_workspace/teste
-!.cproject
-!.project
-!*.ld
+# *
+# !scripts/
+# !scripts/**
+# !.gitignore
+# !LICENSE
+# !README.md
+# !stm32_workspace/
+# # !stm32_workspace/stm32_project
+# !stm32_workspace/teste
+# !Core/Inc
+# !.cproject
+# !.project
+# !*.ld
+
+.metadata
+stm32_project
+.settings
+Debug
+*.launch
