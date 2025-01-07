@@ -14,7 +14,6 @@
 # !*.ld
 
 .metadata
-stm32_project
 .settings
 Debug
 *.launch
