@@ -94,34 +94,34 @@ MicroRos_ChooseAnOption(){
 
 MicroRos_FindDistro(){
     # Use find to locate directories named 'ros'
-    Style_YellowWord "Finding Ros Directory"
-    ros_directories=$(find / -type d -name "ros" 2>/dev/null)
-
-    # Check if any directories were found
-    if [[ -z $ros_directories ]]; then
-        echo "No directories named 'ros' found."
-        BaseFunctions_TerminateProgram
-    fi
-
-    # Convert string to array
-    ros_directories_array=($ros_directories)
-    # echo ${ros_directories_array[0]}
-    # echo ${ros_directories_array[1]}
-    #Size of array ${#ros_directories_array[@]}
-    number_of_options=${#ros_directories_array[@]}
-    MicroRos_ChooseAnOption "${ros_directories_array[@]}"
-    choosen_ros_directory=${ros_directories_array[$choosen_option]}
-    
     Style_YellowWord "Finding Ros Distro"
-    distro_options=($(ls $choosen_ros_directory)) # convert ls output to array
-    
-    if [[ -z $distro_options ]]; then
-        echo "No distros found."
-        BaseFunctions_TerminateProgram
-    fi
+    ros2_distros=("rolling" "kilted" "jazzy" "iron" "humble" "galactic" "foxy" "eloquent" "dashing" "crystal" "bouncy" "ardent")
 
-    number_of_options=${#distro_options[@]} 
-    MicroRos_ChooseAnOption "${distro_options[@]}"
-    ROS_DISTRO=${distro_options[$choosen_option]}
+    for ros2_distro in ${ros2_distros[@]};
+    do
+        Style_NormalWorld "Searching for $ros2_distro"
+        my_ros_distro=$(find /opt/ros/ -type d -name "$ros2_distro" 2>/dev/null)
+        if [[ -n $my_ros_distro ]]; then 
+            break 
+        fi
+    done 
+    if [[ -z $my_ros_distro ]]; then
+        for ros2_distro in ${ros2_distros[@]};
+        do
+            Style_NormalWorld "Searching for $ros2_distro"
+            my_ros_distro=$(find / -type d -path "*/ros/$ros2_distro" 2>/dev/null)
+            if [[ -n $my_ros_distro ]]; then 
+                break 
+            fi
+        done
+    fi
     
+    if [[ -z $my_ros_distro ]]; then
+        Style_RedWord "No Ros2 distro was found. Install a ros2 distro. A list of Ros2 distros can be found bellow:\n"
+        for ros2_distro in ${ros2_distros[@]};
+        do
+           Style_RedWord $ros2_distro
+        done
+    fi
+      
 }
