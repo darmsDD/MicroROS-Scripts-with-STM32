@@ -54,6 +54,13 @@ const osThreadAttr_t defaultTask_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
   .stack_size = 128 * 4
 };
+/* Definitions for microRosTask */
+osThreadId_t microRosTaskHandle;
+const osThreadAttr_t microRosTask_attributes = {
+  .name = "microRosTask",
+  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 3000 * 4
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -61,6 +68,7 @@ const osThreadAttr_t defaultTask_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
+void StartmicroRosTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -94,6 +102,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
+  /* creation of microRosTask */
+  microRosTaskHandle = osThreadNew(StartmicroRosTask, NULL, &microRosTask_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -121,6 +132,52 @@ void StartDefaultTask(void *argument)
 	  osDelay(200);
   }
   /* USER CODE END StartDefaultTask */
+}
+
+/* USER CODE BEGIN Header_StartmicroRosTask */
+/**
+* @brief Function implementing the microRosTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartmicroRosTask */
+void StartmicroRosTask(void *argument)
+{
+  /* USER CODE BEGIN StartmicroRosTask */
+
+  /* This part was retrievied from https://micro.ros.org/docs/tutorials/programming_rcl_rclc/node/ */
+
+  //Initialize micro-ROS allocator
+  // rcl_allocator_t allocator = rcl_get_default_allocator();
+
+  // //Initialize support object
+  // rclc_support_t support;
+  // rcl_ret_t rc = rclc_support_init(&support,argc,argv,&allocator);
+
+
+  // // Create node object
+  // rcl_node_t node;
+  // const char * node_name = "test_node";
+
+  // // Node namespace (Can remain empty "")
+  // const char * namespace = "test_namespace";
+
+  // Init default node 
+
+
+
+  // Init default node
+
+
+
+
+
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartmicroRosTask */
 }
 
 /* Private application code --------------------------------------------------*/
