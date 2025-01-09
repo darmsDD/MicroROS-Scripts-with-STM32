@@ -11,46 +11,50 @@
 . ./stm32Cube_functions.sh # File with functions related to STM32, such as startting STM32CubeIDE and building the project 
 
 
-trap terminateProgram SIGINT
+trap BaseFunctions_TerminateProgram SIGINT
 
 cd ..
 
-stage_init "0- Searching for the directory $micro_utils_folder_name"
-ExecuteFunctionAndCheckError FindFolder $micro_utils_folder_path_to_inside
-stage_over
+Style_StageInit "0- Searching for the directory $micro_utils_folder_name"
+BaseFunctions_ExecuteFunctionAndCheckError BaseFunctions_FindFolder $micro_utils_folder_path_to_inside
+Style_StageOver
 
-stage_init "1- Searching for the directory $microROS_agent_folder_name"
-ExecuteFunctionAndCheckError FindFolder $microROS_agent_folder_name
-stage_over
+Style_StageInit "1- Searching for the directory $microROS_agent_folder_name"
+BaseFunctions_ExecuteFunctionAndCheckError BaseFunctions_FindFolder $microROS_agent_folder_name
+Style_StageOver
 
-stage_init "2- Building microRos agent and installing dependencies"
-ExecuteFunctionAndCheckError MicroRosInitialSetup
-stage_over
-
-stage_init "3- Creating microRos agent"
-ExecuteFunctionAndCheckError MicrosRosAgentSetup
-stage_over
+Style_StageInit "2- Building microRos agent and installing dependencies"
+BaseFunctions_ExecuteFunctionAndCheckError MicroRos_InitialSetup
+Style_StageOver
 
 
-stage_init "4- Starting STM32CubeIDE"
-ExecuteFunctionAndCheckError SetupStm32CubeIde
+Style_StageInit "3- Creating microRos agent"
+BaseFunctions_ExecuteFunctionAndCheckError MicrosRos_AgentSetup
+Style_StageOver
 
-sub_stage_init "4.1- Building stm32 project"
-ExecuteFunctionAndCheckError BuildStm32CubeProject  
-#FlashCodeToBoard
-# purple_word "Is your project already on STM32CubeIDE?[Y/n]:" -n
-# read input
-# if [ $input == "Y" ]; then
-#     sub_stage_init "4.1- Building stm32 project"
-#     ExecuteFunctionAndCheckError BuildStm32CubeProject   
-# fi
-# sub_stage_init "4.2- Opening STM32CubeIDE"
-# StartStm32CubeIde
-# stage_over
+Style_StageInit "4- Building docker"
+BaseFunctions_ExecuteFunctionAndCheckError STM32Cube_PrebuildDocker
+Style_StageOver
+
+
+
+
+
+# Style_StageInit "4- Starting STM32CubeIDE"
+# ExecuteFunctionAndCheckError SetupStm32CubeIde
+
+
+# sub_Style_StageInit "4.1- Building stm32 project"
+# ExecuteFunctionAndCheckError BuildStm32CubeProject  
+
+
+# sub_Style_StageInit "4.2- Flashing code to board"
+# ExecuteFunctionAndCheckError FlashCodeToBoard  
+
 
 
 
 
 # # #gnome-terminal -- bash -c 'tmux send-keys -t $session_name:$window_name.0 "echo "arroz"" Enter'
-kill_process_tree $$ # kill the parent process and its descendents
+BaseFunctions_KillProcessTree $$ # kill the parent process and its descendents
 wait # ## Espera os processos finalizarem

@@ -19,41 +19,41 @@ equal_char="="
 #     repeated_char=$(printf "$equal_char%.0s" $(seq 1 150))
 # }
 
-normal_word(){
+Style_NormalWorld(){
     echo -e $2 ${Color_Off}$1
 }
 
-red_word () {
+Style_RedWord () {
     echo -e $2 ${BRed}$1${Color_Off}
 }
 
-black_word () {
+Style_BlackWord () {
     echo -e $2 ${BBlack}$1${Color_Off}
 }
 
-green_word () {
+Style_GreenWord () {
     echo -e $2 ${BGreen}$1${Color_Off}
 }
 
-yellow_word () {
+Style_YellowWord () {
     echo -e $2 ${BYellow}$1${Color_Off}
 }
 
-purple_word () {
+Style_PurpleWord () {
     echo -e $2 ${BPurple}$1${Color_Off}
 }
 
-stage_over (){
+Style_StageOver (){
 	echo  -e "${On_Black}$repeated_char${Color_Off}"
 	echo -e "${On_Black}$repeated_char${Color_Off}\n"
 }
 
-stage_init(){
+Style_StageInit(){
     echo -e $2 ${BYellow}$1"\n"${Color_Off} 
     #echo -e "${On_Black}$repeated_char${Color_Off}\n"
 }
 
-sub_stage_init(){
+Style_SubStageInit(){
     echo -e $2 "\t"${BYellow}$1"\n"${Color_Off} 
     #echo -e "${On_Black}$repeated_char${Color_Off}\n"
 }

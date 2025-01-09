@@ -13,7 +13,11 @@
 # !.project
 # !*.ld
 
+my_sweet_banana
 .metadata
 .settings
 Debug
 *.launch
+micro_ros_stm32cubemx_utils
+a.sh
+b.sh
