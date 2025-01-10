@@ -1,11 +1,16 @@
 #! /bin/bash
 
 stm32cubeideExec=0
-# Faz a build do pacote e instala dependências 
+
+: '
+    Purpose:    Does the initial setup of microROS, such as finding the distro and 
+                building packages and dependecies.
+    Arguments:  None.
+'
 MicroRos_InitialSetup() {
     MicroRos_FindDistro 
     cd $microROS_agent_folder_name
-    rosdep install --from-path src --ignore-src -y
+    rosdep install --from-path src --ignore-src -y --rosdistro $my_ros_distro
     if [ -d "src" ] && [ -d "build" ] && [ -d "install" ] && [ -d "log" ]; then
         Style_PurpleWord "There is a current build. Skipping this step."
     else
@@ -16,7 +21,10 @@ MicroRos_InitialSetup() {
     cd - &>/dev/null
 }
 
-# Executa os scripts necessários para o agente do micro_ros funcionar
+: '
+    Purpose: Execute scripts necessary for microROS to function.
+    Arguments: None
+'
 MicrosRos_AgentSetup(){
     cd $microROS_agent_folder_name
     if [ -f src/ros2.repos ]
@@ -29,8 +37,11 @@ MicrosRos_AgentSetup(){
     cd - &>/dev/null
 }
 
-# Roda o agente do micro-ros, permitindo observar no terminal com mais detalhes os processos.
-# Como por exemplo, ver quem se inscreveu.
+: '
+    Purpose:    Runs the microROS agent. Allowing the user to visualize the processes in greater detail.
+                For example: observing who has subscribed.
+    Arguments:  None.
+'
 MicrosRos_AgentRun(){
     cd $microROS_agent_folder_name
     source install/local_setup.bash 
@@ -38,7 +49,10 @@ MicrosRos_AgentRun(){
     cd - &>/dev/null
 }
 
-# Função utilizada para checar se o tópico ROS está disponível, e se não estiver, avisar o usuário o que ele pode fazer.
+: '
+    Purpose:    Check if the ros2 topic is avaible, if it is, echo the messages in the terminal. If not, warn the user and try again.
+    Arguments:  1: 1 - Name of topic (topic_name).
+'
 MicroRos_IsTopicAvaible(){
     export ROS_DOMAIN_ID=$my_ros_domain_id
     local topic_name=$1
@@ -51,27 +65,23 @@ MicroRos_IsTopicAvaible(){
     done
 }
 
-# Função utilizada para observar no terminal as mensagens sendo enviadas pelo micro-ros, isto é, o Target (Microcontrolador) para o o Host (PC).
-MicroRos_RosSubscriber(){
-    IsTopicAvaible $topic_velocity_name
-}
-
-# Função utilizada para observar no terminal as mensagens sendo enviadas pelo gazebo, isto é, o Host (PC) para o Target (Microcontrolador).
-MicroRos_RosPublisher(){
-    IsTopicAvaible $topic_imu_name
-}
-
-# Função utilizada para transformar as mensagens to tipo ros para gazebo e gazebo para ros. Permitindo a comunicação entre os tópicos.
-MicroRos_RosBridge(){
-    export ROS_DOMAIN_ID=$my_ros_domain_id
-    bridge_actuator=$topic_velocity_name@$actuator_ros_message_type@$actuator_gazebo_msg_type 
-    bridge_imu=$topic_imu_name@$imu_ros_message_type@$imu_gazebo_msg_type
-    ros2 run ros_gz_bridge parameter_bridge $bridge_actuator $bridge_imu &
-}
+: '
+    Not implemented yet
+    Purpose:    Creates a brigde between gazebo and ros2 messages.
+    Arguments:  1:  1- An array with N elements in which each element has size 3: Topic name, Ros topic message type, Gazebo topic message type. 
+'
+# MicroRos_RosBridge(){
+#     export ROS_DOMAIN_ID=$my_ros_domain_id
+#     bridge_actuator=$topic_velocity_name@$actuator_ros_message_type@$actuator_gazebo_msg_type 
+#     bridge_imu=$topic_imu_name@$imu_ros_message_type@$imu_gazebo_msg_type
+#     ros2 run ros_gz_bridge parameter_bridge $bridge_actuator $bridge_imu &
+# }
 
 
-
-# # Function used to created a menu and make the user choose
+: '
+    Purpose: Create a option menu and make the user choose one.
+    Arguments: The options in an arrray format.
+'
 MicroRos_ChooseAnOption(){
     options_array=($@)
     for ((i = 0; i < $number_of_options; i++)); do
@@ -92,11 +102,16 @@ MicroRos_ChooseAnOption(){
 
 }
 
+: ' 
+    Purpose: Finding the user ros2 distro
+    Arguments: None
+'
 MicroRos_FindDistro(){
     # Use find to locate directories named 'ros'
     Style_YellowWord "Finding Ros Distro"
     ros2_distros=("rolling" "kilted" "jazzy" "iron" "humble" "galactic" "foxy" "eloquent" "dashing" "crystal" "bouncy" "ardent")
 
+    # 1: search in the most common place, /opt/ros/
     for ros2_distro in ${ros2_distros[@]};
     do
         Style_NormalWorld "Searching for $ros2_distro"
@@ -105,6 +120,7 @@ MicroRos_FindDistro(){
             break 
         fi
     done 
+    # 2: If no distro was found in /opt/ros, search everywhere.
     if [[ -z $my_ros_distro ]]; then
         for ros2_distro in ${ros2_distros[@]};
         do
@@ -115,13 +131,16 @@ MicroRos_FindDistro(){
             fi
         done
     fi
-    
+    # 3: If no distro was found, warn the user.
     if [[ -z $my_ros_distro ]]; then
         Style_RedWord "No Ros2 distro was found. Install a ros2 distro. A list of Ros2 distros can be found bellow:\n"
         for ros2_distro in ${ros2_distros[@]};
         do
            Style_RedWord $ros2_distro
         done
+        return ;
     fi
-      
+
+    # 4: Get the distro name from path
+    my_ros_distro=$(basename $my_ros_distro)     
 }
