@@ -15,6 +15,7 @@ trap BaseFunctions_TerminateProgram SIGINT
 
 cd ..
 
+
 Style_StageInit "0- Searching for the directory $micro_utils_folder_name"
 BaseFunctions_ExecuteFunctionAndCheckError BaseFunctions_FindFolder $micro_utils_folder_path_to_inside
 Style_StageOver
@@ -36,7 +37,7 @@ Style_StageInit "4- Building docker"
 BaseFunctions_ExecuteFunctionAndCheckError STM32Cube_PrebuildDocker
 Style_StageOver
 
-
+STM32Cube_AlterProjectProperties
 
 
 
