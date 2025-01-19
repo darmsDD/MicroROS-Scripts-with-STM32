@@ -109,6 +109,12 @@ MicroRos_ChooseAnOption(){
 MicroRos_FindDistro(){
     # Use find to locate directories named 'ros'
     Style_YellowWord "Finding Ros Distro"
+    if [ -n $ROS_DISTRO ]; then
+        echo "The variable ROS_DISTRO is not empty."
+        my_ros_distro=$ROS_DISTRO
+        return 
+    fi
+
     ros2_distros=("rolling" "kilted" "jazzy" "iron" "humble" "galactic" "foxy" "eloquent" "dashing" "crystal" "bouncy" "ardent")
 
     # 1: search in the most common place, /opt/ros/
