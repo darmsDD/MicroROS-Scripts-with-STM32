@@ -58,4 +58,13 @@ Style_SubStageInit(){
     #echo -e "${On_Black}$repeated_char${Color_Off}\n"
 }
 
+Style_RepeatChar(){
+  char=$1
+  count=$2
+  printf "$char%.0s" $(seq 1 $count)
+}
+
+
+
+
 repeated_char=$(printf "$equal_char%.0s" $(seq 1 150))

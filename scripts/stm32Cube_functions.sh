@@ -45,6 +45,22 @@ STM32Cube_FlashCodeToBoard(){
 }
 
 
+STM32CUBE_AddMicrorosLibToCProject(){
+    local line_to_append=$1
+    local search_for=$2
+    local second_line_to_append=$3
+    local tab_n_times=$(Style_RepeatChar "\t" $4)
+    if ! grep -q "$line_to_append" "$XML_FILE"; then
+    sed -i "/$search_for/ {
+            s/\/>/>/
+            a \ $tab_n_times$line_to_append
+            /IS_VALUE_EMPTY=\"true\"/ a\ $second_line_to_append
+            /IS_VALUE_EMPTY=\"false\"/! s/IS_VALUE_EMPTY=\"true\"/IS_VALUE_EMPTY=\"false\"/ 
+        }" $XML_FILE
+    fi
+    set +x
+}
+
 
 STM32Cube_AlterProjectProperties(){
     # Step 5 of Bacurau's guide.
@@ -52,60 +68,32 @@ STM32Cube_AlterProjectProperties(){
         5. Adicione o caminho do micro-ROS nos “includes”. Vá em Project -> Settings -> C/C++ Build -> Settings -> Tool Settings Tab -> MCU GCC Compiler -> Include paths e adicione:
         ${PWD}/../micro_ros_stm32cubemx_utils/microros_static_library_ide/libmicroros/include
     '
-    pwd
-    cubemx_utils_line="<listOptionValue builtIn=\"false\" value=\"\&quot;\${PWD}/../micro_ros_stm32cubemx_utils/microros_static_library_ide/libmicroros/include\&quot;\"/>"
-    sed_search_pattern='<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths.2063006509" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">'
-    # If line is not on the file .cproject, insert line.
-    # sed -i /pattern/a\subsitution . Search for pattern, appends (a), then replace it with your new sentence. The -i flag is to avoid printing to console.
-    grep -q "$cubemx_utils_line" stm32_workspace/stm32_project/.cproject || sed -i /"$sed_search_pattern"/a\\"\t\t\t\t\t\t\t\t\t$cubemx_utils_line" stm32_workspace/stm32_project/.cproject
-    Style_PurpleWord "I am here fuckers"
-
     
-    microros_lib_line="<listOptionValue builtIn=\"false\" value=\"microros\"/>"
-    line_above_microros_lib_line_v1="<option IS_BUILTIN_EMPTY=\"false\" IS_VALUE_EMPTY=\"true\" id=\"com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.libraries.928418063\" name=\"Libraries (-l)\" superClass=\"com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.libraries\" valueType=\"libs\""
-    line_above_microros_lib_line_v2="<option IS_BUILTIN_EMPTY=\"false\" IS_VALUE_EMPTY=\"false\" id=\"com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.libraries.928418063\" name=\"Libraries (-l)\" superClass=\"com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.libraries\" valueType=\"libs\""
-    line_under_microros_lib_line="</option>" 
-    file_path="stm32_workspace/stm32_project/.cproject"
-
-    # Adding tabs for prettier format"
-    # For some reason, the first \char prints the char instead of the function.
-    # For example: \t prints t instead of tab.
-    microros_lib_line_with_tab="\ \t\t\t\t\t\t\t\t\t${microros_lib_line}"
-    line_under_microros_lib_line_with_tab="\ \t\t\t\t\t\t\t\t${line_under_microros_lib_line}"
-
-
-    # Check if microros line exists, if it does not:
-    # 1: Check if there are other libraries, if there are execute elif
-    #   Just adds the microros lib
-    # 2: If there are no other libraries, execute the if.
-    #   Replaces the line where the libs are placed.
-    #   IS_VALUE_EMPTY="true" => IS_VALUE_EMPTY="false"
-    #   And then adds the microros lib 
-
-    if ! grep -q "$microros_lib_line" "$file_path"; then
-        if grep -q "$line_above_microros_lib_line_v1" "$file_path"; then
-            # Replace the line and insert a new line under it
-            sed -i "/$line_above_microros_lib_line_v1/ {
-                s|$line_above_microros_lib_line_v1/|$line_above_microros_lib_line_v2|
-                a $microros_lib_line_with_tab
-                a $line_under_microros_lib_line_with_tab
-            }" "$file_path"
-            echo "Line replaced and new line inserted."
-        elif grep -q "$line_above_microros_lib_line_v2" "$file_path"; then
-            sed -i "/$line_above_microros_lib_line_v2/a\\\t\t\t\t\t\t\t\t\t\t$microros_lib_line" "$file_path"
-            echo "Other Line replaced and new line inserted."
-        else
-            echo "Line not found."
-        fi
+    file_path="$micro_utils_folder_path/.cproject"
+    XML_FILE=$file_path
+    tab_9_times=$(Style_RepeatChar "\t" 9)
+    tab_8_times=$(Style_RepeatChar "\t" 8)
+    
+    line_to_append="<listOptionValue builtIn=\"false\" value=\"&quot;\${PWD}/../micro_ros_stm32cubemx_utils/microros_static_library_ide/libmicroros/include&quot;\"/>"
+    interval_open="<folderInfo id=\"com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug."
+    interval_close="<\/folderInfo>"
+    search_for="Include paths (-I)"
+    if ! grep -q "$line_to_append" "$XML_FILE"; then
+        sed -i "/$interval_open[^>]*>/,/$interval_open_close/ {
+        /$search_for/ a\ $tab_9_times$line_to_append
+        }" $XML_FILE
     fi
+
+    line_to_append="<listOptionValue builtIn=\"false\" value=\"microros\"/>"
+    search_for="Libraries (-l)"
+    second_line_to_append="$tab_8_times</option>"
+    STM32CUBE_AddMicrorosLibToCProject "$line_to_append" "$search_for" "$second_line_to_append" 9
+
+    line_to_append="<listOptionValue builtIn=\"false\" value=\"&quot;\${PWD}/../micro_ros_stm32cubemx_utils/microros_static_library_ide/libmicroros&quot;\"/>"
+    search_for="Library search path (-L)"
+    STM32CUBE_AddMicrorosLibToCProject "$line_to_append" "$search_for" "$second_line_to_append" 9
     
     
-    
-    
-    
-    #sed_search_pattern2='<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.libraries.928418063" name="Libraries (-l)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.libraries" valueType="libs"/>'
-    #grep -q "$lib_line" stm32_workspace/stm32_project/.cproject || sed -i /"$sed_search_pattern2"/a\\"\t\t\t\t\t\t\t\t\t$lib_line" stm32_workspace/stm32_project/.cproject
-    set +x
 }
 
 #pwd; cd ../../../scripts;./main.sh;
