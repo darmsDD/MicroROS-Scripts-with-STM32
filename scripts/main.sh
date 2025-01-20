@@ -39,7 +39,7 @@ Style_StageOver
 
 STM32Cube_AlterProjectProperties
 
-
+STM32Cube_AlterIOCProperties
 
 # Style_StageInit "4- Starting STM32CubeIDE"
 # ExecuteFunctionAndCheckError SetupStm32CubeIde

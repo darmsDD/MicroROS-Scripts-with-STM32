@@ -111,3 +111,16 @@ BaseFunctions_KillProcessTree() {
       kill -SIGTERM $parent_pid 2>/dev/null
     fi
 }
+
+BaseFunctions_GenerateRandomNumber(){
+    while true; do
+        random_10_digit_number=$(shuf -i 1000000000-9999999999 -n 1)
+        # Check if the number exists in the file
+        if ! grep -q "$random_10_digit_number" "$XML_FILE"; then
+            echo $random_10_digit_number
+            # If not found, break the loop
+            break
+        fi
+    done
+
+}
