@@ -64,6 +64,10 @@ Style_RepeatChar(){
   printf "$char%.0s" $(seq 1 $count)
 }
 
+Style_FormatMultilineVarForSed(){
+    sed_multiline_array="$@"
+    formatted_multine=$(echo "$sed_multiline_array" | sed "s/ /\\\\\n/g")
+}
 
 
 

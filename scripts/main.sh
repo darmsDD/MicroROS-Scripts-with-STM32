@@ -15,6 +15,10 @@ trap BaseFunctions_TerminateProgram SIGINT
 
 cd ..
 
+# var=$(ls)
+
+# BaseFunctions_Menu "${var[@]}" "project"
+
 
 Style_StageInit "0- Searching for the directory $micro_utils_folder_name"
 BaseFunctions_ExecuteFunctionAndCheckError BaseFunctions_FindFolder $micro_utils_folder_path_to_inside
@@ -28,7 +32,6 @@ Style_StageInit "2- Building microRos agent and installing dependencies"
 BaseFunctions_ExecuteFunctionAndCheckError MicroRos_InitialSetup
 Style_StageOver
 
-
 Style_StageInit "3- Creating microRos agent"
 BaseFunctions_ExecuteFunctionAndCheckError MicrosRos_AgentSetup
 Style_StageOver
@@ -37,21 +40,13 @@ Style_StageInit "4- Building docker"
 BaseFunctions_ExecuteFunctionAndCheckError STM32Cube_PrebuildDocker
 Style_StageOver
 
-STM32Cube_AlterProjectProperties
+# Style_StageInit "5- Changing project properties"
+# BaseFunctions_ExecuteFunctionAndCheckError STM32Cube_AlterProjectProperties
+# Style_StageOver
 
-STM32Cube_AlterIOCProperties
-
-# Style_StageInit "4- Starting STM32CubeIDE"
-# ExecuteFunctionAndCheckError SetupStm32CubeIde
-
-
-# sub_Style_StageInit "4.1- Building stm32 project"
-# ExecuteFunctionAndCheckError BuildStm32CubeProject  
-
-
-# sub_Style_StageInit "4.2- Flashing code to board"
-# ExecuteFunctionAndCheckError FlashCodeToBoard  
-
+Style_StageInit "6- Changing .ioc file properties"
+BaseFunctions_ExecuteFunctionAndCheckError STM32Cube_AlterIOCProperties
+Style_StageOver
 
 
 
