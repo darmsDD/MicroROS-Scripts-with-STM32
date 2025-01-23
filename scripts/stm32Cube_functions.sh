@@ -122,48 +122,11 @@ $tab_8_times</option>"
     STM32CUBE_AddMicrorosLibToCProject "$line_to_append" "$search_for" "$second_line_to_append" 9 "$escaped_string"
 }
 
-
-
-STM32Cube_SedSingleLineAppendCommand(){
-    for cmd in "${append_commands[@]}"; do
-        search_for=$(echo $cmd | awk -F'\' '{print $2}')
-        grep -q "$search_for" "$file" || sed -i "$cmd" "$file"
-    done
-}
-
-STM32Cube_SedSingleLineSubstituteCommand(){
-    for cmd in "${substitute_commands[@]}"; do
-        sed -i "$cmd" "$file"
-    done
-}
-STM32Cube_SedOtherCommand(){
-    for cmd in "${other_commands[@]}"; do
-        sed -i -e "$cmd" "$file"
-    done
-}
-
-STM32Cube_SedMultilineAppendCommand(){
-    # Loop through the array and apply each set of commands
-    for cmd in "${multiple_lines_append[@]}"; do
-        Style_FormatMultilineVarForSed ${cmd[@]}
-        search_for=$(echo ${cmd[@]} | awk -F'/a\\\\' '{print $2}' | tr ' ' '\n')
-        #search_for=$(tr ' ' '\n' <<< $search_for)
-        grep -q "$search_for" "$file" || sed -i "$formatted_multine" "$file"
-    done
-}
-
-
-
+# Use of a IOC model to replace the current IOC file with FREERTOS AND MICROROS configuration.
+# Do not execute if you do not have a brand new IOC file, because it will erase your configurations.
 STM32Cube_AlterIOCProperties(){
-
     file=$micro_utils_folder_path/$stm32_project_name.ioc
-    
-    STM32Cube_SedSingleLineSubstituteCommand
-
-    STM32Cube_SedSingleLineAppendCommand
-
-    STM32Cube_SedOtherCommand
-
-    STM32Cube_SedMultilineAppendCommand
-    
+    cat ./scripts/iocModel.ioc > $file
+    sed -i "/ProjectManager.ProjectFileName=/s/=.*$/=$stm32_project_name.ioc/" $file
+    sed -i "/ProjectManager.ProjectName=/s/=.*$/=$stm32_project_name/" $file
 }
