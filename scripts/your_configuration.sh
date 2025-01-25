@@ -1,9 +1,7 @@
 #! /bin/bash
 
 
-microROS_agent_folder_name="my_sweet_banana"
-stm32_workspace_name="stm32_workspace"
-stm32_project_name="stm32_project"
+microROS_agent_folder_name="microROS_agentFolder"
 my_ros_domain_id=25
 
 

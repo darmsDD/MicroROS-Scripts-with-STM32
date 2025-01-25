@@ -9,11 +9,11 @@ BaseFunctions_FindFolder() {
     if [ ! -d $folder_path_to_inside ]; then
         Style_PurpleWord "Directory not found." 
         Style_YellowWord "To resolve, the following steps must be taken:\n"
-        if [ $folder_path_to_inside = $micro_utils_folder_path_to_inside ]; then
-            local steps=("Clone micro utils repository" "Replace extra_packages.repos with your own" "Copy essential files to $micro_utils_folder_path/Core/Src\n")
+        if [ "$folder_path_to_inside" = "$micro_utils_folder_path_to_inside" ]; then
+            local steps=("Clone micro utils repository" "Replace extra_packages.repos with your own" "Copy essential files to $stm32_project_path/Core/Src\n")
             BaseFunctions_AuthorizationInput BaseFunctions_CreateUtilsFolder "${steps[@]}"
-        elif [ $folder_path_to_inside = $microROS_agent_folder_name ]; then
-            local steps=("Create the directory $microROS_agent_folder_name" "Navigate to $microROS_agent_folder_name" "Clones micro_ros agent repository")
+        elif [ "$folder_path_to_inside" = "$micro_ros_agent_path_to_inside" ]; then
+            local steps=("Create the directory $micro_ros_agent_path_to_inside" "Navigate to $micro_ros_agent_path_to_inside" "Clones micro_ros agent repository")
             BaseFunctions_AuthorizationInput BaseFunctions_CreateMicroRosAgentFolder "${steps[@]}"
         fi
     else
@@ -22,7 +22,7 @@ BaseFunctions_FindFolder() {
 }
 
 BaseFunctions_CreateUtilsFolder(){
-    git -C $micro_utils_folder_path clone https://github.com/micro-ROS/micro_ros_stm32cubemx_utils.git
+    git -C $stm32_project_path clone https://github.com/micro-ROS/micro_ros_stm32cubemx_utils.git
     cp scripts/extra_packages.repos "$micro_utils_folder_path_to_inside/microros_static_library_ide/library_generation/extra_packages/extra_packages.repos"
     cp scripts/extra_packages.repos "$micro_utils_folder_path_to_inside/microros_static_library/library_generation/extra_packages/extra_packages.repos"
     cd $micro_utils_path_to_extra_resources
@@ -31,9 +31,8 @@ BaseFunctions_CreateUtilsFolder(){
 }
 
 BaseFunctions_CreateMicroRosAgentFolder(){
-    mkdir -p $microROS_agent_folder_name
-    git -C $microROS_agent_folder_name clone -b $ROS_DISTRO https://github.com/micro-ROS/micro_ros_setup.git src/micro_ros_setup 
-    pwd
+    mkdir -p $micro_ros_agent_path_to_inside
+    git -C $micro_ros_agent_path_to_inside clone -b $ROS_DISTRO https://github.com/micro-ROS/micro_ros_setup.git src/micro_ros_setup 
 }
 
 
@@ -69,7 +68,7 @@ BaseFunctions_ExecuteFunctionAndCheckError(){
     local my_function=$1
     local arguments=(${@:2}) # take the arguments of the my_function
     $my_function $arguments # executes the function passed as argument
-    if [[ $? = 0 ]]; then
+    if [[ "$?" = 0 ]]; then
         Style_GreenWord "Success"
     else
         Style_RedWord "Something went wrong. Check the called functions:"
@@ -83,7 +82,7 @@ BaseFunctions_TerminateProgram(){
     
     Style_YellowWord "\nRemoving $microROS_agent_folder_name and $micro_utils_folder_name. Do you authorize?[Y/n]:" -n
     read input
-    if [ $input == "Y" ]; then
+    if [ "$input" == "Y" ]; then
        #ExecuteFunctionAndCheckError $my_function $my_clean_up_function
        rm -rf $micro_utils_folder_path_to_inside
        rm -rf $microROS_agent_folder_name
@@ -110,4 +109,62 @@ BaseFunctions_KillProcessTree() {
     if [ $parent_pid -ne $$ ]; then
       kill -SIGTERM $parent_pid 2>/dev/null
     fi
+}
+
+BaseFunctions_GenerateRandomNumber(){
+    while true; do
+        random_10_digit_number=$(shuf -i 1000000000-9999999999 -n 1)
+        # Check if the number exists in the file
+        if ! grep -q "$random_10_digit_number" "$XML_FILE"; then
+            echo "$random_10_digit_number"
+            # If not found, break the loop
+            break
+        fi
+    done
+
+}
+
+
+BaseFunctions_Menu(){
+    list=($1)
+    type=$2
+    local -n var_to_change=$3
+    #echo "${list[0]}"
+    while true;
+        do
+        i=0
+        for item in ${list[@]};
+        do
+            Style_NormalWorld "$i:$item"
+            i=$((i+1))
+        done
+        read -p "Choose a(n) $type:" input
+        echo $i
+        if [[ $input =~ ^[0-9]+$ ]] && ((input>0 && input<$i)); then
+            Style_YellowWord "You choose: ${list[$input]}"
+            var_to_change=${list[$input]}
+            break
+        else
+            Style_YellowWord "Invalide choice, your choice must be a number between 0 and $i."
+        fi
+    done 
+}
+
+
+
+BaseFunctions_SetWorkspaceAndProject(){
+
+    if dpkg-query -W zenity 2>/dev/null | grep -q "zenity"; then
+        Style_GreenWord "Zenity is installed."
+    else
+        Style_YellowWord "Zenity is not installed."
+        Style_YellowWord "Installing zenity."
+        sudo apt-get install zenity
+    fi
+
+    choosen_project=$(zenity --file-selection --directory --title="Select a project" 2>/dev/null)
+    stm32_workspace_name=$(dirname $choosen_project)
+    stm32_project_name=$(basename $choosen_project)
+    . scripts/fixed_configuration.sh # File with configurations you should not change 
+
 }

@@ -58,4 +58,17 @@ Style_SubStageInit(){
     #echo -e "${On_Black}$repeated_char${Color_Off}\n"
 }
 
+Style_RepeatChar(){
+  char=$1
+  count=$2
+  printf "$char%.0s" $(seq 1 $count)
+}
+
+Style_FormatMultilineVarForSed(){
+    sed_multiline_array="$@"
+    formatted_multine=$(echo "$sed_multiline_array" | sed "s/ /\\\\\n/g")
+}
+
+
+
 repeated_char=$(printf "$equal_char%.0s" $(seq 1 150))

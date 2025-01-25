@@ -19,5 +19,14 @@ my_sweet_banana
 Debug
 *.launch
 micro_ros_stm32cubemx_utils
-a.sh
+testes_aleatorios.sh
 b.sh
+example.xml
+example.txt
+a.txt
+mTmux.sh
+teste_antes.ioc
+teste2
+teste3
+teste
+microROS_agentFolder
