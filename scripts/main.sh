@@ -4,7 +4,6 @@
 
 # Initial setup to provide access to necessary functions.
 . ./your_configuration.sh # File with configurations you should change 
-. ./fixed_configuration.sh # File with configurations you should not change
 . ./style.sh # File with stylization
 . ./base_functions.sh # File with base functions, such as finding directiories, checking for errors in functions, etc.
 . ./microROS_functions.sh # File with functions related to microROS, such as cloning the correct repository, starting the agent, etc.
@@ -15,36 +14,35 @@ trap BaseFunctions_TerminateProgram SIGINT
 
 cd ..
 
-# var=$(ls)
 
-# BaseFunctions_Menu "${var[@]}" "project"
+Style_StageInit "0- Defining the workspace and the project"
+BaseFunctions_ExecuteFunctionAndCheckError BaseFunctions_SetWorkspaceAndProject
 
-
-Style_StageInit "0- Searching for the directory $micro_utils_folder_name"
+Style_StageInit "1- Searching for the directory $micro_utils_folder_name"
 BaseFunctions_ExecuteFunctionAndCheckError BaseFunctions_FindFolder $micro_utils_folder_path_to_inside
 Style_StageOver
 
-Style_StageInit "1- Searching for the directory $microROS_agent_folder_name"
-BaseFunctions_ExecuteFunctionAndCheckError BaseFunctions_FindFolder $microROS_agent_folder_name
+Style_StageInit "2- Searching for the directory $microROS_agent_folder_name"
+BaseFunctions_ExecuteFunctionAndCheckError BaseFunctions_FindFolder $micro_ros_agent_path_to_inside
 Style_StageOver
 
-Style_StageInit "2- Building microRos agent and installing dependencies"
+Style_StageInit "3- Building microRos agent and installing dependencies"
 BaseFunctions_ExecuteFunctionAndCheckError MicroRos_InitialSetup
 Style_StageOver
 
-Style_StageInit "3- Creating microRos agent"
+Style_StageInit "4- Creating microRos agent"
 BaseFunctions_ExecuteFunctionAndCheckError MicrosRos_AgentSetup
 Style_StageOver
 
-Style_StageInit "4- Building docker"
+Style_StageInit "5- Building docker"
 BaseFunctions_ExecuteFunctionAndCheckError STM32Cube_PrebuildDocker
 Style_StageOver
 
-# Style_StageInit "5- Changing project properties"
-# BaseFunctions_ExecuteFunctionAndCheckError STM32Cube_AlterProjectProperties
-# Style_StageOver
+Style_StageInit "6- Changing project properties"
+BaseFunctions_ExecuteFunctionAndCheckError STM32Cube_AlterProjectProperties
+Style_StageOver
 
-Style_StageInit "6- Changing .ioc file properties"
+Style_StageInit "7- Changing .ioc file properties"
 BaseFunctions_ExecuteFunctionAndCheckError STM32Cube_AlterIOCProperties
 Style_StageOver
 

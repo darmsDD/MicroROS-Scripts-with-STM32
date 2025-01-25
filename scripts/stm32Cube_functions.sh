@@ -1,6 +1,5 @@
 #! /bin/bash
 
-. ./ioc_vars.sh
 
 STM32Cube_Setup(){
     
@@ -19,16 +18,16 @@ STM32Cube_StartIde(){
 }
 
 STM32Cube_PrebuildDocker(){
-    project_full_path=$(realpath $micro_utils_folder_path)
+    project_full_path=$(realpath $stm32_project_path)
     # The full path is needed because if your project has characters, such as _, it returns the error:
     # "your_project_path/project_name" includes invalid characters for a local volume name, only "[a-zA-Z0-9][a-zA-Z0-9_.-]" are allowed. If you intended to pass a host directory, use absolute path.
-    echo "docker pull microros/micro_ros_static_library_builder:${ROS_DISTRO} && docker run --rm -v "$project_full_path":/project --env MICROROS_LIBRARY_FOLDER=micro_ros_stm32cubemx_utils/microros_static_library_ide microros/micro_ros_static_library_builder:${ROS_DISTRO}"
-    # docker pull microros/micro_ros_static_library_builder:${ROS_DISTRO} && docker run --rm -v "$project_full_path":/project --env MICROROS_LIBRARY_FOLDER=micro_ros_stm32cubemx_utils/microros_static_library_ide microros/micro_ros_static_library_builder:${ROS_DISTRO}
+    #echo "docker pull microros/micro_ros_static_library_builder:${ROS_DISTRO} && docker run --rm -v "$project_full_path":/project --env MICROROS_LIBRARY_FOLDER=micro_ros_stm32cubemx_utils/microros_static_library_ide microros/micro_ros_static_library_builder:${ROS_DISTRO}"
+    docker pull microros/micro_ros_static_library_builder:${ROS_DISTRO} && docker run --rm -v "$project_full_path":/project --env MICROROS_LIBRARY_FOLDER=micro_ros_stm32cubemx_utils/microros_static_library_ide microros/micro_ros_static_library_builder:${ROS_DISTRO}
 }
 
 
 STM32Cube_BuildProject(){
-    #cd "$micro_utils_folder_path/Debug"
+    #cd "$stm32_project_path/Debug"
     build_stm="$stm32cubeideExec --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data "$stm32_workspace_name" -build $stm32_project_name/Debug"
     #clean_build="make"
     #build_stm="make -j8 all"
@@ -56,7 +55,7 @@ STM32CUBE_AddMicrorosLibToCProject(){
     #set -x
     if  ! grep -q "$line_to_append" "$XML_FILE"; then
         if ! grep -q "$search_for" "$XML_FILE"; then
-            sed -i "/Linker Script (-T)/ a\\$if_no_lib_string" $XML_FILE
+            sed -i "/Linker Script (-T)/a\\$if_no_lib_string" $XML_FILE
         else  
             sed -i "/$search_for/ {
                     s/\/>/>/
@@ -77,7 +76,7 @@ STM32Cube_AlterProjectProperties(){
         ${PWD}/../micro_ros_stm32cubemx_utils/microros_static_library_ide/libmicroros/include
     '
     
-    file_path="$micro_utils_folder_path/.cproject"
+    file_path="$stm32_project_path/.cproject"
     XML_FILE=$file_path
     tab_9_times=$(Style_RepeatChar "\t" 9)
     tab_8_times=$(Style_RepeatChar "\t" 8)
@@ -99,9 +98,12 @@ STM32Cube_AlterProjectProperties(){
     # ==================================================================================================================================================
     second_line_to_append="$tab_8_times</option>"
     library_path_random_number=$(BaseFunctions_GenerateRandomNumber)
+  
     library_search_path="$tab_8_times<option IS_BUILTIN_EMPTY=\"false\" IS_VALUE_EMPTY=\"false\" id=\"com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.directories.$library_path_random_number\" name=\"Library search path (-L)\" superClass=\"com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.directories\" valueType=\"libPaths\">
 $tab_9_times<listOptionValue builtIn=\"false\" value=\"&quot;\${PWD}/../micro_ros_stm32cubemx_utils/microros_static_library_ide/libmicroros&quot;\"/>
 $tab_8_times</option>"
+
+   
 
     escaped_string=$(echo "$library_search_path" | sed 's/$/\\/' | sed '$ s/\\$//')  # add \ to end of line in every lane. Then removes the \ in the last line. This is needed to work with sed and strings with multiple lines.
     line_to_append="<listOptionValue builtIn=\"false\" value=\"&quot;\${PWD}/../micro_ros_stm32cubemx_utils/microros_static_library_ide/libmicroros&quot;\"/>"
@@ -122,11 +124,17 @@ $tab_8_times</option>"
     STM32CUBE_AddMicrorosLibToCProject "$line_to_append" "$search_for" "$second_line_to_append" 9 "$escaped_string"
 }
 
+
+
 # Use of a IOC model to replace the current IOC file with FREERTOS AND MICROROS configuration.
 # Do not execute if you do not have a brand new IOC file, because it will erase your configurations.
 STM32Cube_AlterIOCProperties(){
-    file=$micro_utils_folder_path/$stm32_project_name.ioc
+    file=$stm32_project_path/$stm32_project_name.ioc
     cat ./scripts/iocModel.ioc > $file
     sed -i "/ProjectManager.ProjectFileName=/s/=.*$/=$stm32_project_name.ioc/" $file
     sed -i "/ProjectManager.ProjectName=/s/=.*$/=$stm32_project_name/" $file
 }
+
+
+
+# docker pull microros/micro_ros_static_library_builder:jazzy && docker run --rm -v /home/ivan/Desktop/Unicamp/MicroROS-Scripts-with-STM32/your_stm32_workspace/teste:/project --env MICROROS_LIBRARY_FOLDER=micro_ros_stm32cubemx_utils/microros_static_library_ide microros/micro_ros_static_library_builder:jazzy

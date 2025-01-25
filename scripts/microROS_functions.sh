@@ -9,7 +9,7 @@ stm32cubeideExec=0
 '
 MicroRos_InitialSetup() {
     MicroRos_FindDistro 
-    cd $microROS_agent_folder_name
+    cd $micro_ros_agent_path_to_inside
     rosdep install --from-path src --ignore-src -y --rosdistro $my_ros_distro
     if [ -d "src" ] && [ -d "build" ] && [ -d "install" ] && [ -d "log" ]; then
         Style_PurpleWord "There is a current build. Skipping this step."
@@ -26,7 +26,7 @@ MicroRos_InitialSetup() {
     Arguments: None
 '
 MicrosRos_AgentSetup(){
-    cd $microROS_agent_folder_name
+    cd $micro_ros_agent_path_to_inside
     if [ -f src/ros2.repos ]
     then
         Style_PurpleWord "The setup was done previously. Skipping this step."
@@ -43,7 +43,7 @@ MicrosRos_AgentSetup(){
     Arguments:  None.
 '
 MicrosRos_AgentRun(){
-    cd $microROS_agent_folder_name
+    cd $micro_ros_agent_path_to_inside
     source install/local_setup.bash 
     ros2 run micro_ros_agent micro_ros_agent serial --dev $(ls /dev/serial/by-id/*) -b 115200
     cd - &>/dev/null
