@@ -14,6 +14,7 @@
 # !*.ld
 
 my_sweet_banana
+your_stm32_workspace
 .metadata
 .settings
 Debug
