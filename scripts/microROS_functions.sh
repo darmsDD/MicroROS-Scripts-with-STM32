@@ -2,7 +2,10 @@
 
 # =====================================================================
 # Script Name:     microROS_functions.sh
-# Description:     Brief description of what the script does.
+# Description:     File with functions related to microROS, such as 
+#                  cloning the correct repository, starting the agent 
+#                  and others.
+#                  
 # Author:          Ivan Diniz Dobbin (ivandinizdobbin2@gmail.com)
 # Date Created:    26/01/2025
 # Last Modified:   26/01/2025

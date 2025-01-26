@@ -3,7 +3,10 @@
 
 # =====================================================================
 # Script Name:     base_functions.sh
-# Description:     Brief description of what the script does.
+# Description:     File with base functions, such as finding 
+#                  directories, checking for errors in functions and
+#                  others.
+#
 # Author:          Ivan Diniz Dobbin (ivandinizdobbin2@gmail.com)
 # Date Created:    26/01/2025
 # Last Modified:   26/01/2025
@@ -15,14 +18,17 @@
 # =====================================================================
 
 
-: '
-    Purpose:    Responsible for checking that the micro_ros_stm32cubemx_utils and the micro Ros agent folder exists, as they are essential.
-                - If micro_ros_stm32cubemx_utils does not exist, call BaseFunctions_CreateUtilsFolder.
-                - If the Micro Ros agent folder ($microROS_agent_folder_name, you can find it in your_configuration.sh) does not exist, call BaseFunctions_CreateMicroRosAgentFolder.
-    
-    Arguments:  1- Path to inside of the folder. 
-                    Example: if the folder is named microROS_agentFolder, the path can be /Desktop/My_project/microROS_agentFolder
-'
+# ==============================================================================================================================
+#    Description:   Responsible for checking that the micro_ros_stm32cubemx_utils and the micro Ros agent folder exists, 
+#                   as they are essential.
+#                       - If micro_ros_stm32cubemx_utils does not exist, call BaseFunctions_CreateUtilsFolder.
+#                       - If the Micro Ros agent folder ($microROS_agent_folder_name, you can find it in your_configuration.sh) 
+#                       does not exist, call BaseFunctions_CreateMicroRosAgentFolder.
+#    
+#    Arguments:     1- Path to inside of the folder. 
+#                       Example: if the folder is named microROS_agentFolder, the path can be 
+#                       /Desktop/My_project/microROS_agentFolder
+# ==============================================================================================================================
 BaseFunctions_FindFolder() {
     local folder_path_to_inside=$1
     if [ ! -d $folder_path_to_inside ]; then
@@ -41,13 +47,13 @@ BaseFunctions_FindFolder() {
 }
 
 
-: '
-    Purpose:    1- Clone the repository https://github.com/micro-ROS/micro_ros_stm32cubemx_utils.git.
-                2- Rewrite the extra_packages.repos file, adding the packages needed for the project.
-                3- Add essential files to your STM32 Core/Src folder.
-    
-    Arguments:  None
-'
+# ==================================================================================================================
+#    Description:   1- Clone the repository https://github.com/micro-ROS/micro_ros_stm32cubemx_utils.git.
+#                   2- Rewrite the extra_packages.repos file, adding the packages needed for the project.
+#                   3- Add essential files to your STM32 Core/Src folder.
+#    
+#    Arguments:     None
+# ==================================================================================================================
 BaseFunctions_CreateUtilsFolder(){
     git -C $stm32_project_path clone https://github.com/micro-ROS/micro_ros_stm32cubemx_utils.git
     cp scripts/extra_packages.repos "$micro_utils_folder_path_to_inside/microros_static_library_ide/library_generation/extra_packages/extra_packages.repos"
@@ -58,26 +64,27 @@ BaseFunctions_CreateUtilsFolder(){
 }
 
 
-: '
-    Purpose:    Create a folder named $microROS_agent_folder_name (you can find it in the your_configuration.sh) and clone the repository https://github.com/micro-ROS/micro_ros_setup.git. 
-    
-    Arguments:  None.
-'
+# ==================================================================================================================
+#    Description:   Create a folder named $microROS_agent_folder_name (you can find it in the your_configuration.sh)
+#                   and clone the repository https://github.com/micro-ROS/micro_ros_setup.git. 
+#    
+#    Arguments:     None.
+#
 BaseFunctions_CreateMicroRosAgentFolder(){
     mkdir -p $micro_ros_agent_path_to_inside
     git -C $micro_ros_agent_path_to_inside clone -b $ROS_DISTRO https://github.com/micro-ROS/micro_ros_setup.git src/micro_ros_setup 
 }
 
 
-: '
-    Purpose:    Asks if you want to execute the steps declared.
-                If so, it executes the function passed as the first argument.
-                If not, it exist the program.
-               
-    Arguments:  1- Function to be executed
-                2- String array with every step to be executed. 
-                    Example: local steps=("Create the directory $micro_ros_agent_path_to_inside" "Navigate to $micro_ros_agent_path_to_inside" "Clones micro_ros agent repository")
-'
+# ==================================================================================================================
+#    Description:   Asks if you want to execute the steps declared.
+#                   If so, it executes the function passed as the first argument.
+#                   If not, it exist the program.
+#               
+#    Arguments:     1- Function to be executed
+#                   2- String array with every step to be executed. 
+#                    Example: local steps=("Create the directory"  "Navigate to new dir" )
+# ==================================================================================================================
 BaseFunctions_AuthorizationInput(){
     local my_function=$1
     local steps=("${@:2}")
@@ -99,12 +106,13 @@ BaseFunctions_AuthorizationInput(){
 }
 
 
-: '
-    Purpose:    Runs the function and checks if there were any errors. In the event of an error, it prints the stack of functions
-                called, and then executes the cleanup function.  
-    Arguments:  1- Function to be executed
-                2- Arguments of the function to be executed. You can also pass 0 arguments.
-'
+# ==============================================================================================================================
+#    Description:   Runs the function and checks if there were any errors. In the event of an error, it prints the stack of 
+#                   functions called, and then executes the cleanup function.  
+#
+#    Arguments:     1- Function to be executed
+#                   2- Arguments of the function to be executed. You can also pass 0 arguments.
+# ==============================================================================================================================
 BaseFunctions_ExecuteFunctionAndCheckError(){
     local my_function=$1
     local arguments=(${@:2}) # take the arguments of the my_function
@@ -119,12 +127,13 @@ BaseFunctions_ExecuteFunctionAndCheckError(){
 }
 
 
-: '
-    Purpose:    Terminates the program in case of error or user pressing Ctrl+c.
-                It asks the user if it can remove the micro_ros_stm32cubemx_utils and micro Ros agent folder, kills all
-                child processes and finalize the program.    
-    Arguments:  None.
-'
+# ==============================================================================================================================
+#    Description:   Terminates the program in case of error or user pressing Ctrl+c.
+#                   It asks the user if it can remove the micro_ros_stm32cubemx_utils and micro Ros agent folder, kills all
+#                   child processes and finalize the program.    
+#
+#    Arguments:     None.
+# ==============================================================================================================================
 BaseFunctions_TerminateProgram(){
     Style_YellowWord "\nRemoving $microROS_agent_folder_name and $micro_utils_folder_name. Do you authorize?[Y/n]:" -n
     read input
@@ -143,10 +152,10 @@ BaseFunctions_TerminateProgram(){
 }
 
 
-: '
-    Purpose:    Kills all descendants of a parent process.    
-    Arguments:  1- Parent process pid.
-'
+# ==============================================================================================================================
+#    Description:   Kills all descendants of a parent process.    
+#    Arguments:     1- Parent process pid.
+# ==============================================================================================================================
 BaseFunctions_KillProcessTree() {
     local parent_pid=$1
     # Find all child processes
@@ -162,10 +171,10 @@ BaseFunctions_KillProcessTree() {
 }
 
 
-: '
-    Purpose:    Generates a random 10 digit number between 1000000000-9999999999. Currently used by ioc file.
-    Arguments:  None.
-'
+# ==============================================================================================================================
+#    Description:   Generates a random 10 digit number between 1000000000-9999999999. Currently used by ioc file.
+#    Arguments:     None.
+# ==============================================================================================================================
 BaseFunctions_GenerateRandomNumber(){
     while true; do
         random_10_digit_number=$(shuf -i 1000000000-9999999999 -n 1)
@@ -180,11 +189,11 @@ BaseFunctions_GenerateRandomNumber(){
 }
 
 
-: '
-    Purpose:    Allows the user to choose a STM32 project to configure.
-                It also checks if zenity is installed and asks permission to install if it is not present.
-    Arguments:  None.
-'
+# ==============================================================================================================================
+#    Description:   Allows the user to choose a STM32 project to configure.
+#                   It also checks if zenity is installed and asks permission to install if it is not present.
+#    Arguments:     None.
+# ==============================================================================================================================
 BaseFunctions_SetWorkspaceAndProject(){
 
     if dpkg-query -W zenity 2>/dev/null | grep -q "zenity"; then

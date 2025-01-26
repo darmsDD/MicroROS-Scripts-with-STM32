@@ -2,7 +2,7 @@
 
 # =====================================================================
 # Script Name:     style.sh
-# Description:     Brief description of what the script does.
+# Description:     File with functions related to stylization.
 # Author:          Ivan Diniz Dobbin (ivandinizdobbin2@gmail.com)
 # Date Created:    26/01/2025
 # Last Modified:   26/01/2025

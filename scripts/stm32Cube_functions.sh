@@ -2,8 +2,8 @@
 
 # =====================================================================
 # Script Name:      stm32Cube_functions.sh
-# Description:      This script has all the functions related to
-#                   STM32CubeIDE, such as editing the .ioc file.
+# Description:      File with functions related to STM32, such as 
+#                   editing the .ioc file and the project properties.
 #
 # Author:           Ivan Diniz Dobbin (ivandinizdobbin2@gmail.com)
 # Date Created:     26/01/2025

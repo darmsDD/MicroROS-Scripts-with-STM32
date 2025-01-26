@@ -2,7 +2,7 @@
 
 # =====================================================================
 # Script Name:     your_configuration.sh
-# Description:     Brief description of what the script does.
+# Description:     File with configurations you can change.
 # Author:          Ivan Diniz Dobbin (ivandinizdobbin2@gmail.com)
 # Date Created:    26/01/2025
 # Last Modified:   26/01/2025

@@ -2,7 +2,9 @@
 
 # =====================================================================
 # Script Name:     main.sh
-# Description:     Brief description of what the script does.
+# Description:     File to be executed.
+#                  1- chmod +x main.sh
+#                  2- ./main.sh
 # Author:          Ivan Diniz Dobbin (ivandinizdobbin2@gmail.com)
 # Date Created:    26/01/2025
 # Last Modified:   26/01/2025
@@ -17,9 +19,9 @@
 
 
 # Initial setup to provide access to necessary functions.
-. ./your_configuration.sh # File with configurations you should change 
+. ./your_configuration.sh # File with configurations you can change 
 . ./style.sh # File with stylization
-. ./base_functions.sh # File with base functions, such as finding directiories, checking for errors in functions, etc.
+. ./base_functions.sh # File with base functions, such as finding directories, checking for errors in functions, etc.
 . ./microROS_functions.sh # File with functions related to microROS, such as cloning the correct repository, starting the agent, etc.
 . ./stm32Cube_functions.sh # File with functions related to STM32, such as altering the .ioc file and the project properties.
 
