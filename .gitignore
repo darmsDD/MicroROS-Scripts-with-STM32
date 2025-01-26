@@ -1,33 +1,9 @@
-# Ignore everything
-# *
-# !scripts/
-# !scripts/**
-# !.gitignore
-# !LICENSE
-# !README.md
-# !stm32_workspace/
-# # !stm32_workspace/stm32_project
-# !stm32_workspace/teste
-# !Core/Inc
-# !.cproject
-# !.project
-# !*.ld
-
-my_sweet_banana
 your_stm32_workspace
 .metadata
-.settings
-Debug
-*.launch
-micro_ros_stm32cubemx_utils
-testes_aleatorios.sh
+a.txt
 b.sh
+testes_aleatorios.sh 
 example.xml
 example.txt
 a.txt
 mTmux.sh
-teste_antes.ioc
-teste2
-teste3
-teste
-microROS_agentFolder
