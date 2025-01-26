@@ -7,21 +7,24 @@
 . ./style.sh # File with stylization
 . ./base_functions.sh # File with base functions, such as finding directiories, checking for errors in functions, etc.
 . ./microROS_functions.sh # File with functions related to microROS, such as cloning the correct repository, starting the agent, etc.
-. ./stm32Cube_functions.sh # File with functions related to STM32, such as startting STM32CubeIDE and building the project 
+. ./stm32Cube_functions.sh # File with functions related to STM32, such as altering the .ioc file and the project properties.
 
 
+# Execute a cleanup function if user presses Ctrl+c
 trap BaseFunctions_TerminateProgram SIGINT
 
 cd ..
 
-
+# Define the STM32 project to be configured
 Style_StageInit "0- Defining the workspace and the project"
 BaseFunctions_ExecuteFunctionAndCheckError BaseFunctions_SetWorkspaceAndProject
 
+# Checks if the micro_utils folder is present, if not, download it and does other necessary procedures.
 Style_StageInit "1- Searching for the directory $micro_utils_folder_name"
 BaseFunctions_ExecuteFunctionAndCheckError BaseFunctions_FindFolder $micro_utils_folder_path_to_inside
 Style_StageOver
 
+# Checks if the micro_utils folder is present, if not, download it.
 Style_StageInit "2- Searching for the directory $microROS_agent_folder_name"
 BaseFunctions_ExecuteFunctionAndCheckError BaseFunctions_FindFolder $micro_ros_agent_path_to_inside
 Style_StageOver
@@ -49,6 +52,6 @@ Style_StageOver
 
 
 
-# # #gnome-terminal -- bash -c 'tmux send-keys -t $session_name:$window_name.0 "echo "arroz"" Enter'
-BaseFunctions_KillProcessTree $$ # kill the parent process and its descendents
+# kill the descendents of the process
+BaseFunctions_KillProcessTree $$ 
 wait # ## Espera os processos finalizarem
