@@ -53,48 +53,6 @@ MicrosRos_AgentSetup(){
     cd - &>/dev/null
 }
 
-#=======================================================================================================================
-#   Description:    Runs the microROS agent. Allowing the user to visualize the processes in greater detail.
-#                   For example: observing who has subscribed.
-#   Arguments:      None.
-#=======================================================================================================================
-MicrosRos_AgentRun(){
-    cd $micro_ros_agent_path_to_inside
-    source install/local_setup.bash 
-    ros2 run micro_ros_agent micro_ros_agent serial --dev $(ls /dev/serial/by-id/*) -b 115200
-    cd - &>/dev/null
-}
-
-#=======================================================================================================================
-#   Description:    Check if the ros2 topic is avaible, if it is, echo the messages in the terminal. 
-#                   If not, warn the user and try again.
-#   Arguments:      1 - Name of topic (topic_name).
-#=======================================================================================================================
-MicroRos_IsTopicAvaible(){
-    export ROS_DOMAIN_ID=$my_ros_domain_id
-    local topic_name=$1
-    Style_PurpleWord "Flash the programm to the microcontroller or press the reset button if the code was already flashed to the board."
-    ros2 topic echo $topic_name
-    while [[ $? -ne 0 ]]; do
-        Style_RedWord "Topic unavaible, flash the programm to the microcontroller. I will wait 5 seconds and try again."
-        sleep 5
-        ros2 topic echo $topic_name
-    done
-}
-
-
-#=======================================================================================================================
-#   Not implemented yet
-#   Description:    Creates a brigde between gazebo and ros2 messages.
-#   Arguments:      1- An array with N elements in which each element has size 3: Topic name, Ros topic message type, Gazebo topic message type. 
-#=======================================================================================================================
-# MicroRos_RosBridge(){
-#     export ROS_DOMAIN_ID=$my_ros_domain_id
-#     bridge_actuator=$topic_velocity_name@$actuator_ros_message_type@$actuator_gazebo_msg_type 
-#     bridge_imu=$topic_imu_name@$imu_ros_message_type@$imu_gazebo_msg_type
-#     ros2 run ros_gz_bridge parameter_bridge $bridge_actuator $bridge_imu &
-# }
-
 
 #=======================================================================================================================
 #   Description:    Create a option menu and make the user choose one.

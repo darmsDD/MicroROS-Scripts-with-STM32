@@ -175,7 +175,7 @@ BaseFunctions_KillProcessTree() {
 #    Description:   Generates a random 10 digit number between 1000000000-9999999999. Currently used by ioc file.
 #    Arguments:     None.
 # ==============================================================================================================================
-BaseFunctions_GenerateRandomNumber(){
+BaseFunctions_GenerateRandom10DigitNumber(){
     while true; do
         random_10_digit_number=$(shuf -i 1000000000-9999999999 -n 1)
         # Check if the number exists in the file
