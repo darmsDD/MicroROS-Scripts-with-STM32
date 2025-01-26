@@ -80,7 +80,7 @@ MicroRos_IsTopicAvaible(){
 
 : '
     Purpose: Create a option menu and make the user choose one.
-    Arguments: The options in an arrray format.
+    Arguments: The options in an array format.
 '
 MicroRos_ChooseAnOption(){
     options_array=($@)
@@ -115,6 +115,9 @@ MicroRos_FindDistro(){
         return 
     fi
 
+    # If you have multiple ros distros, and want a specific one, you should alter the ros2_distros, because it automatically chooses the first one
+    # found based on the list order.
+    # Example: ros2_distros=("humble" "kilted"), will always choose humble if it is installed.
     ros2_distros=("rolling" "kilted" "jazzy" "iron" "humble" "galactic" "foxy" "eloquent" "dashing" "crystal" "bouncy" "ardent")
 
     # 1: search in the most common place, /opt/ros/
