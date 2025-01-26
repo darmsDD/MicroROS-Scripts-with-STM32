@@ -13,7 +13,4 @@ Repository dedicated to facilitating the integration of microROS and STM32
 4. Choose your project.
 5. Follow the instructions shown in the terminal.
 
-<video width="640" height="360" controls>
-  <source src="./STM32Microros.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+[![Watch the video](https://github.com/darmsDD/MicroROS-Scripts-with-STM32/blob/main/thumbnail.png)](https://github.com/darmsDD/MicroROS-Scripts-with-STM32/blob/main/STM32Microros.mp4)
