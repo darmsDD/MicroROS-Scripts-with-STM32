@@ -1,5 +1,18 @@
 #! /bin/bash
 
+# =====================================================================
+# Script Name:     fixed_configurations.sh
+# Description:     Brief description of what the script does.
+# Author:          Ivan Diniz Dobbin (ivandinizdobbin2@gmail.com)
+# Date Created:    26/01/2025
+# Last Modified:   26/01/2025
+# Version:         1.0.0
+# =====================================================================
+# Notes:
+#   - This script was only tested in a ubuntu 24.04.01 LTS with bash.
+#
+# =====================================================================
+
 micro_utils_folder_name="micro_ros_stm32cubemx_utils" # Name of the micro ros utils folder
 stm32_project_path="$stm32_workspace_name/$stm32_project_name" # The path into your stm32 project
 
