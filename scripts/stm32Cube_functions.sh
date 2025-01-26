@@ -1,12 +1,14 @@
 #! /bin/bash
 
 # =====================================================================
-# Script Name:     stm32Cube_functions.sh
-# Description:     Brief description of what the script does.
-# Author:          Ivan Diniz Dobbin (ivandinizdobbin2@gmail.com)
-# Date Created:    26/01/2025
-# Last Modified:   26/01/2025
-# Version:         1.0.0
+# Script Name:      stm32Cube_functions.sh
+# Description:      This script has all the functions related to
+#                   STM32CubeIDE, such as editing the .ioc file.
+#
+# Author:           Ivan Diniz Dobbin (ivandinizdobbin2@gmail.com)
+# Date Created:     26/01/2025
+# Last Modified:    26/01/2025
+# Version:          1.0.0
 # =====================================================================
 # Notes:
 #   - This script was only tested in a ubuntu 24.04.01 LTS with bash.
@@ -15,6 +17,15 @@
 
 
 
+
+
+# ======================================================================
+# Description:  Finds the STM32CubeIde executable. Allowing the 
+#               STM32CubeIde program to be opened via terminal.
+#               
+# Arguments:    None.
+# Note:         Not being used.
+# ======================================================================
 STM32Cube_Setup(){
     
     BASE_DIR=/
@@ -27,19 +38,34 @@ STM32Cube_Setup(){
     fi
 }
 
+# ======================================================================
+# Description:  Opens the STM32CubeIde program via terminal.
+# Arguments:    None.
+# Note:         Not being used.
+# ======================================================================
 STM32Cube_StartIde(){
     $stm32cubeideExec &>/dev/null &
 }
 
+# ======================================================================
+# Description:  Execute the docker step. Before, this was done in the
+#               pre-build steps in the STM32CubeIde.
+# Arguments:    None.
+#
+# ======================================================================
 STM32Cube_PrebuildDocker(){
     project_full_path=$(realpath $stm32_project_path)
     # The full path is needed because if your project has characters, such as _, it returns the error:
     # "your_project_path/project_name" includes invalid characters for a local volume name, only "[a-zA-Z0-9][a-zA-Z0-9_.-]" are allowed. If you intended to pass a host directory, use absolute path.
-    #echo "docker pull microros/micro_ros_static_library_builder:${ROS_DISTRO} && docker run --rm -v "$project_full_path":/project --env MICROROS_LIBRARY_FOLDER=micro_ros_stm32cubemx_utils/microros_static_library_ide microros/micro_ros_static_library_builder:${ROS_DISTRO}"
     docker pull microros/micro_ros_static_library_builder:${ROS_DISTRO} && docker run --rm -v "$project_full_path":/project --env MICROROS_LIBRARY_FOLDER=micro_ros_stm32cubemx_utils/microros_static_library_ide microros/micro_ros_static_library_builder:${ROS_DISTRO}
 }
 
 
+# ======================================================================
+# Description:  Builds the stm32 project.
+# Arguments:    None.
+# Note:         Not being used.
+# ======================================================================
 STM32Cube_BuildProject(){
     #cd "$stm32_project_path/Debug"
     build_stm="$stm32cubeideExec --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data "$stm32_workspace_name" -build $stm32_project_name/Debug"
@@ -52,14 +78,35 @@ STM32Cube_BuildProject(){
 }
 
 
+# ======================================================================
+# Description:  Flashs the code to your board.
+# Arguments:    None.
+# Note:         Not being used. 
+#               Needs the packages stlink-tools and gcc-arm-none-eabi.
+#               These packages can be installed with:
+#                   sudo apt install stlink-tools
+#                   sudo apt install gcc-arm-none-eabi
+#               
+# ======================================================================
 STM32Cube_FlashCodeToBoard(){
-    #sudo apt install stlink-tools
-    #sudo apt install gcc-arm-none-eabi
+
     arm-none-eabi-objcopy -O binary $stm32_project_name.elf $stm32_project_name.bin
     sudo st-flash write $stm32_project_name.bin 0x08000000
 }
 
 
+# ======================================================================
+# Description:  Alter MCU/MPU GCC LINKER project properties for 
+#               micro-ROS usage.
+#
+# Arguments:    1- Line to append.
+#               2- Line that will be changed or appended to.
+#               3- Second line to append.
+#               4- How many tabs are needed to format the sentence.
+#               5- If you did not find the sentence present 
+#                  in $search_for, append the new sentence
+#                  $if_no_lib_string
+# ======================================================================
 STM32CUBE_AddMicrorosLibToCProject(){
     local line_to_append=$1
     local search_for=$2
@@ -83,6 +130,14 @@ STM32CUBE_AddMicrorosLibToCProject(){
 }
 
 
+# ======================================================================
+# Description:  Alters project properties for micro-ROS usage.
+#               Based on Bacurau's guide and 
+#               https://github.com/micro-ROS/micro_ros_stm32cubemx_utils
+#
+# Arguments:    None.    
+#
+# ======================================================================
 STM32Cube_AlterProjectProperties(){
     # Step 5 of Bacurau's guide.
     : '
@@ -96,7 +151,7 @@ STM32Cube_AlterProjectProperties(){
     tab_8_times=$(Style_RepeatChar "\t" 8)
     
     # ========================= Project properties ->C/C++ Build -> Settings ->  MCU/MPU GCC COMPILER -> Include Paths -> Include path(-I) ==============
-     # ==================================================================================================================================================
+    # ==================================================================================================================================================
 
     line_to_append="<listOptionValue builtIn=\"false\" value=\"&quot;\${PWD}/../micro_ros_stm32cubemx_utils/microros_static_library_ide/libmicroros/include&quot;\"/>"
     interval_open="<folderInfo id=\"com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug."
@@ -139,16 +194,16 @@ $tab_8_times</option>"
 }
 
 
-
-# Use of a IOC model to replace the current IOC file with FREERTOS AND MICROROS configuration.
-# Do not execute if you do not have a brand new IOC file, because it will erase your configurations.
+# ======================================================================
+# Description:  Use of a IOC model to replace the current IOC file with 
+#               FREERTOS AND micro-ROS configuration.
+# Arguments:    None.
+# Note:         Execute only if you have a brand new IOC file, 
+#               because it will erase your configurations.
+# ======================================================================
 STM32Cube_AlterIOCProperties(){
     file=$stm32_project_path/$stm32_project_name.ioc
-    cat ./scripts/iocModel.ioc > $file
-    sed -i "/ProjectManager.ProjectFileName=/s/=.*$/=$stm32_project_name.ioc/" $file
-    sed -i "/ProjectManager.ProjectName=/s/=.*$/=$stm32_project_name/" $file
+    cat ./scripts/iocModel.ioc > $file # Replaces the file
+    sed -i "/ProjectManager.ProjectFileName=/s/=.*$/=$stm32_project_name.ioc/" $file # Correct the .ioc file name.
+    sed -i "/ProjectManager.ProjectName=/s/=.*$/=$stm32_project_name/" $file # Correct the project name
 }
-
-
-
-# docker pull microros/micro_ros_static_library_builder:jazzy && docker run --rm -v /home/ivan/Desktop/Unicamp/MicroROS-Scripts-with-STM32/your_stm32_workspace/teste:/project --env MICROROS_LIBRARY_FOLDER=micro_ros_stm32cubemx_utils/microros_static_library_ide microros/micro_ros_static_library_builder:jazzy
