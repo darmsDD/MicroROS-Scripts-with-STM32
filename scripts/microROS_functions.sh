@@ -18,11 +18,11 @@
 
 stm32cubeideExec=0
 
-: '
-    Purpose:    Does the initial setup of microROS, such as finding the distro and 
-                building packages and dependecies.
-    Arguments:  None.
-'
+#=======================================================================================================================
+#   Description:    Does the initial setup of microROS, such as finding the distro and 
+#                   building packages and dependecies.
+#   Arguments:      None.
+#=======================================================================================================================
 MicroRos_InitialSetup() {
     MicroRos_FindDistro 
     cd $micro_ros_agent_path_to_inside
@@ -37,10 +37,10 @@ MicroRos_InitialSetup() {
     cd - &>/dev/null
 }
 
-: '
-    Purpose: Execute scripts necessary for microROS to function.
-    Arguments: None
-'
+#=======================================================================================================================
+#   Description:    Execute scripts necessary for microROS to function.
+#   Arguments:      None
+#=======================================================================================================================
 MicrosRos_AgentSetup(){
     cd $micro_ros_agent_path_to_inside
     if [ -f src/ros2.repos ]
@@ -53,11 +53,11 @@ MicrosRos_AgentSetup(){
     cd - &>/dev/null
 }
 
-: '
-    Purpose:    Runs the microROS agent. Allowing the user to visualize the processes in greater detail.
-                For example: observing who has subscribed.
-    Arguments:  None.
-'
+#=======================================================================================================================
+#   Description:    Runs the microROS agent. Allowing the user to visualize the processes in greater detail.
+#                   For example: observing who has subscribed.
+#   Arguments:      None.
+#=======================================================================================================================
 MicrosRos_AgentRun(){
     cd $micro_ros_agent_path_to_inside
     source install/local_setup.bash 
@@ -65,10 +65,11 @@ MicrosRos_AgentRun(){
     cd - &>/dev/null
 }
 
-: '
-    Purpose:    Check if the ros2 topic is avaible, if it is, echo the messages in the terminal. If not, warn the user and try again.
-    Arguments:  1: 1 - Name of topic (topic_name).
-'
+#=======================================================================================================================
+#   Description:    Check if the ros2 topic is avaible, if it is, echo the messages in the terminal. 
+#                   If not, warn the user and try again.
+#   Arguments:      1 - Name of topic (topic_name).
+#=======================================================================================================================
 MicroRos_IsTopicAvaible(){
     export ROS_DOMAIN_ID=$my_ros_domain_id
     local topic_name=$1
@@ -81,11 +82,12 @@ MicroRos_IsTopicAvaible(){
     done
 }
 
-: '
-    Not implemented yet
-    Purpose:    Creates a brigde between gazebo and ros2 messages.
-    Arguments:  1:  1- An array with N elements in which each element has size 3: Topic name, Ros topic message type, Gazebo topic message type. 
-'
+
+#=======================================================================================================================
+#   Not implemented yet
+#   Description:    Creates a brigde between gazebo and ros2 messages.
+#   Arguments:      1- An array with N elements in which each element has size 3: Topic name, Ros topic message type, Gazebo topic message type. 
+#=======================================================================================================================
 # MicroRos_RosBridge(){
 #     export ROS_DOMAIN_ID=$my_ros_domain_id
 #     bridge_actuator=$topic_velocity_name@$actuator_ros_message_type@$actuator_gazebo_msg_type 
@@ -94,10 +96,10 @@ MicroRos_IsTopicAvaible(){
 # }
 
 
-: '
-    Purpose: Create a option menu and make the user choose one.
-    Arguments: The options in an array format.
-'
+#=======================================================================================================================
+#   Description:    Create a option menu and make the user choose one.
+#   Arguments:      The options in an array format.
+#=======================================================================================================================
 MicroRos_ChooseAnOption(){
     options_array=($@)
     for ((i = 0; i < $number_of_options; i++)); do
@@ -118,10 +120,11 @@ MicroRos_ChooseAnOption(){
 
 }
 
-: ' 
-    Purpose: Finding the user ros2 distro
-    Arguments: None
-'
+
+# ======================================================================================================================= 
+#   Description:    Finding the user ros2 distro
+#   Arguments:      None
+# =======================================================================================================================
 MicroRos_FindDistro(){
     # Use find to locate directories named 'ros'
     Style_YellowWord "Finding Ros Distro"
