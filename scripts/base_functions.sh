@@ -174,7 +174,7 @@ BaseFunctions_GenerateRandomNumber(){
 BaseFunctions_SetWorkspaceAndProject(){
 
     if dpkg-query -W zenity 2>/dev/null | grep -q "zenity"; then
-        Style_GreenWord "Zenity is installed."
+        Style_PurpleWord "Zenity is installed."
     else
         Style_YellowWord "Zenity is not installed."
         install_zenity="sudo apt-get install zenity"
