@@ -1,11 +1,11 @@
 #! /bin/bash
 
-micro_utils_folder_name="micro_ros_stm32cubemx_utils"
-stm32_project_path="$stm32_workspace_name/$stm32_project_name"
+micro_utils_folder_name="micro_ros_stm32cubemx_utils" # Name of the micro ros utils folder
+stm32_project_path="$stm32_workspace_name/$stm32_project_name" # The path into your stm32 project
 
-micro_utils_folder_path_to_inside="$stm32_project_path/$micro_utils_folder_name"
-micro_utils_path_to_extra_resources="$micro_utils_folder_path_to_inside/extra_sources"
-micro_ros_agent_path_to_inside="$stm32_project_path/$microROS_agent_folder_name"
+micro_utils_folder_path_to_inside="$stm32_project_path/$micro_utils_folder_name" # The path into micro_utils folder
+micro_utils_path_to_extra_resources="$micro_utils_folder_path_to_inside/extra_sources" # The path into micro_utils extra sources
+micro_ros_agent_path_to_inside="$stm32_project_path/$microROS_agent_folder_name" # The path into micro ros agent folder.
 
 
 
