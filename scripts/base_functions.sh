@@ -1,9 +1,14 @@
 #! /bin/bash
 
 
-# Responsible for checking that the micro_ros_stm32cubemx_utils folder exists, as it is essential.
-# 1- If the folder doesn't exist, clone the repository.
-# 2- Rewrite the extra_packages.repos file, adding the packages needed for the project.
+: '
+    Purpose:    Responsible for checking that the micro_ros_stm32cubemx_utils and the micro Ros agent folder exists, as they are essential.
+                - If micro_ros_stm32cubemx_utils does not exist, call BaseFunctions_CreateUtilsFolder.
+                - If the Micro Ros agent folder ($microROS_agent_folder_name, you can find it in your_configuration.sh) does not exist, call BaseFunctions_CreateMicroRosAgentFolder.
+    
+    Arguments:  1- Path to inside of the folder. 
+                    Example: if the folder is named microROS_agentFolder, the path can be /Desktop/My_project/microROS_agentFolder
+'
 BaseFunctions_FindFolder() {
     local folder_path_to_inside=$1
     if [ ! -d $folder_path_to_inside ]; then
@@ -21,6 +26,14 @@ BaseFunctions_FindFolder() {
     fi
 }
 
+
+: '
+    Purpose:    1- Clone the repository https://github.com/micro-ROS/micro_ros_stm32cubemx_utils.git.
+                2- Rewrite the extra_packages.repos file, adding the packages needed for the project.
+                3- Add essential files to your STM32 Core/Src folder.
+    
+    Arguments:  None
+'
 BaseFunctions_CreateUtilsFolder(){
     git -C $stm32_project_path clone https://github.com/micro-ROS/micro_ros_stm32cubemx_utils.git
     cp scripts/extra_packages.repos "$micro_utils_folder_path_to_inside/microros_static_library_ide/library_generation/extra_packages/extra_packages.repos"
@@ -30,16 +43,27 @@ BaseFunctions_CreateUtilsFolder(){
     cd - &>/dev/null
 }
 
+
+: '
+    Purpose:    Create a folder named $microROS_agent_folder_name (you can find it in the your_configuration.sh) and clone the repository https://github.com/micro-ROS/micro_ros_setup.git. 
+    
+    Arguments:  None.
+'
 BaseFunctions_CreateMicroRosAgentFolder(){
     mkdir -p $micro_ros_agent_path_to_inside
     git -C $micro_ros_agent_path_to_inside clone -b $ROS_DISTRO https://github.com/micro-ROS/micro_ros_setup.git src/micro_ros_setup 
 }
 
 
-# Asks if you want to execute the steps previously declared.
-# If so, it executes the function passed as the first argument.
-# If not, it exist the program.
-# Argument 1: Function to be executed
+: '
+    Purpose:    Asks if you want to execute the steps declared.
+                If so, it executes the function passed as the first argument.
+                If not, it exist the program.
+               
+    Arguments:  1- Function to be executed
+                2- String array with every step to be executed. 
+                    Example: local steps=("Create the directory $micro_ros_agent_path_to_inside" "Navigate to $micro_ros_agent_path_to_inside" "Clones micro_ros agent repository")
+'
 BaseFunctions_AuthorizationInput(){
     local my_function=$1
     local steps=("${@:2}")
@@ -61,9 +85,12 @@ BaseFunctions_AuthorizationInput(){
 }
 
 
-# Runs the function and checks if there were any errors. In the event of an error, it executes the cleanup function.
-# Argument 1: function to be executed
-# Argument 2: cleanup function to be executed in case of error. 
+: '
+    Purpose:    Runs the function and checks if there were any errors. In the event of an error, it prints the stack of functions
+                called, and then executes the cleanup function.  
+    Arguments:  1- Function to be executed
+                2- Arguments of the function to be executed. You can also pass 0 arguments.
+'
 BaseFunctions_ExecuteFunctionAndCheckError(){
     local my_function=$1
     local arguments=(${@:2}) # take the arguments of the my_function
@@ -73,13 +100,18 @@ BaseFunctions_ExecuteFunctionAndCheckError(){
     else
         Style_RedWord "Something went wrong. Check the called functions:"
         Style_PurpleWord "$my_function ${FUNCNAME[*]}"
-        $terminateProgram # performs the cleanup function in case of failure (removing files and so on that were created during the process).
-        exit $?
+        BaseFunctions_TerminateProgram # performs the cleanup function in case of failure (removing files and so on that were created during the process).
     fi
 }
 
+
+: '
+    Purpose:    Terminates the program in case of error or user pressing Ctrl+c.
+                It asks the user if it can remove the micro_ros_stm32cubemx_utils and micro Ros agent folder, kills all
+                child processes and finalize the program.    
+    Arguments:  None.
+'
 BaseFunctions_TerminateProgram(){
-    
     Style_YellowWord "\nRemoving $microROS_agent_folder_name and $micro_utils_folder_name. Do you authorize?[Y/n]:" -n
     read input
     if [ "$input" == "Y" ]; then
@@ -96,7 +128,11 @@ BaseFunctions_TerminateProgram(){
     exit
 }
 
-# Responsible for deleting all descendants of a parent process.
+
+: '
+    Purpose:    Kills all descendants of a parent process.    
+    Arguments:  1- Parent process pid.
+'
 BaseFunctions_KillProcessTree() {
     local parent_pid=$1
     # Find all child processes
@@ -111,6 +147,11 @@ BaseFunctions_KillProcessTree() {
     fi
 }
 
+
+: '
+    Purpose:    Generates a random 10 digit number between 1000000000-9999999999. Currently used by ioc file.
+    Arguments:  None.
+'
 BaseFunctions_GenerateRandomNumber(){
     while true; do
         random_10_digit_number=$(shuf -i 1000000000-9999999999 -n 1)
@@ -125,43 +166,23 @@ BaseFunctions_GenerateRandomNumber(){
 }
 
 
-BaseFunctions_Menu(){
-    list=($1)
-    type=$2
-    local -n var_to_change=$3
-    #echo "${list[0]}"
-    while true;
-        do
-        i=0
-        for item in ${list[@]};
-        do
-            Style_NormalWorld "$i:$item"
-            i=$((i+1))
-        done
-        read -p "Choose a(n) $type:" input
-        echo $i
-        if [[ $input =~ ^[0-9]+$ ]] && ((input>0 && input<$i)); then
-            Style_YellowWord "You choose: ${list[$input]}"
-            var_to_change=${list[$input]}
-            break
-        else
-            Style_YellowWord "Invalide choice, your choice must be a number between 0 and $i."
-        fi
-    done 
-}
-
-
-
+: '
+    Purpose:    Allows the user to choose a STM32 project to configure.
+                It also checks if zenity is installed and asks permission to install if it is not present.
+    Arguments:  None.
+'
 BaseFunctions_SetWorkspaceAndProject(){
 
     if dpkg-query -W zenity 2>/dev/null | grep -q "zenity"; then
         Style_GreenWord "Zenity is installed."
     else
         Style_YellowWord "Zenity is not installed."
-        Style_YellowWord "Installing zenity."
-        sudo apt-get install zenity
+        install_zenity="sudo apt-get install zenity"
+        local steps=("Install zenity")
+        BaseFunctions_AuthorizationInput  "$install_zenity"  "${install_zenity}"
     fi
 
+    Style_YellowWord "Choose your project."
     choosen_project=$(zenity --file-selection --directory --title="Select a project" 2>/dev/null)
     stm32_workspace_name=$(dirname $choosen_project)
     stm32_project_name=$(basename $choosen_project)
