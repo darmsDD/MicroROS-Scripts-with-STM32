@@ -13,4 +13,4 @@ Repository dedicated to facilitating the integration of microROS and STM32
 4. Choose your project.
 5. Follow the instructions shown in the terminal.
 
-[![Stm32CubeIde and MicroROS](https://img.youtube.com/vi/LQszjlWqP4o/0.jpg)](https://www.youtube.com/watch?v=LQszjlWqP4o)
+[![Stm32CubeIde and MicroROS](https://img.youtube.com/vi/mPAE4mRnuys/0.jpg)](https://www.youtube.com/watch?v=mPAE4mRnuys)
