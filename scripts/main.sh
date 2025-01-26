@@ -70,4 +70,4 @@ Style_StageOver
 
 # kill the descendents of the process
 BaseFunctions_KillProcessTree $$ 
-wait # ## Espera os processos finalizarem
+wait # ## Wait for the processes to end.
