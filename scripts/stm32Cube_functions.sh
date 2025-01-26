@@ -17,36 +17,6 @@
 
 
 
-
-
-# ======================================================================
-# Description:  Finds the STM32CubeIde executable. Allowing the 
-#               STM32CubeIde program to be opened via terminal.
-#               
-# Arguments:    None.
-# Note:         Not being used.
-# ======================================================================
-STM32Cube_Setup(){
-    
-    BASE_DIR=/
-    Style_PurpleWord "Searching for the STM32CubeIde executable"
-    stm32cubeideExec=$(find $BASE_DIR -ipath *st/stm32cubeide*/stm32cubeide 2>/dev/null)
-    if [[ -n "$stm32cubeideExec" ]]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-# ======================================================================
-# Description:  Opens the STM32CubeIde program via terminal.
-# Arguments:    None.
-# Note:         Not being used.
-# ======================================================================
-STM32Cube_StartIde(){
-    $stm32cubeideExec &>/dev/null &
-}
-
 # ======================================================================
 # Description:  Execute the docker step. Before, this was done in the
 #               pre-build steps in the STM32CubeIde.
@@ -59,41 +29,6 @@ STM32Cube_PrebuildDocker(){
     # "your_project_path/project_name" includes invalid characters for a local volume name, only "[a-zA-Z0-9][a-zA-Z0-9_.-]" are allowed. If you intended to pass a host directory, use absolute path.
     docker pull microros/micro_ros_static_library_builder:${ROS_DISTRO} && docker run --rm -v "$project_full_path":/project --env MICROROS_LIBRARY_FOLDER=micro_ros_stm32cubemx_utils/microros_static_library_ide microros/micro_ros_static_library_builder:${ROS_DISTRO}
 }
-
-
-# ======================================================================
-# Description:  Builds the stm32 project.
-# Arguments:    None.
-# Note:         Not being used.
-# ======================================================================
-STM32Cube_BuildProject(){
-    #cd "$stm32_project_path/Debug"
-    build_stm="$stm32cubeideExec --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data "$stm32_workspace_name" -build $stm32_project_name/Debug"
-    #clean_build="make"
-    #build_stm="make -j8 all"
-    #$clean_build
-    $build_stm
-    # cd - &>/dev/null
-    
-}
-
-
-# ======================================================================
-# Description:  Flashs the code to your board.
-# Arguments:    None.
-# Note:         Not being used. 
-#               Needs the packages stlink-tools and gcc-arm-none-eabi.
-#               These packages can be installed with:
-#                   sudo apt install stlink-tools
-#                   sudo apt install gcc-arm-none-eabi
-#               
-# ======================================================================
-STM32Cube_FlashCodeToBoard(){
-
-    arm-none-eabi-objcopy -O binary $stm32_project_name.elf $stm32_project_name.bin
-    sudo st-flash write $stm32_project_name.bin 0x08000000
-}
-
 
 # ======================================================================
 # Description:  Alter MCU/MPU GCC LINKER project properties for 
@@ -166,7 +101,7 @@ STM32Cube_AlterProjectProperties(){
     # ========================= Project properties ->C/C++ Build -> Settings ->  MCU/MPU GCC LINKER -> Libraries -> Library search path(-L) ============
     # ==================================================================================================================================================
     second_line_to_append="$tab_8_times</option>"
-    library_path_random_number=$(BaseFunctions_GenerateRandomNumber)
+    library_path_random_number=$(BaseFunctions_GenerateRandom10DigitNumber)
   
     library_search_path="$tab_8_times<option IS_BUILTIN_EMPTY=\"false\" IS_VALUE_EMPTY=\"false\" id=\"com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.directories.$library_path_random_number\" name=\"Library search path (-L)\" superClass=\"com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.directories\" valueType=\"libPaths\">
 $tab_9_times<listOptionValue builtIn=\"false\" value=\"&quot;\${PWD}/../micro_ros_stm32cubemx_utils/microros_static_library_ide/libmicroros&quot;\"/>
@@ -182,7 +117,7 @@ $tab_8_times</option>"
 
     # ========================= Project properties ->C/C++ Build -> Settings ->  MCU/MPU GCC LINKER -> Libraries -> Libraries(-l) ============
     # ==================================================================================================================================================
-    library_random_number=$(BaseFunctions_GenerateRandomNumber)
+    library_random_number=$(BaseFunctions_GenerateRandom10DigitNumber)
     library_microros="$tab_8_times<option IS_BUILTIN_EMPTY=\"false\" IS_VALUE_EMPTY=\"false\" id=\"com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.libraries.$library_random_number\" name=\"Libraries (-l)\" superClass=\"com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.libraries\" valueType=\"libs\">
 $tab_9_times<listOptionValue builtIn=\"false\" value=\"microros\"/>
 $tab_8_times</option>"
