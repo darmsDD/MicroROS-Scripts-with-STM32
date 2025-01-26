@@ -13,4 +13,4 @@ Repository dedicated to facilitating the integration of microROS and STM32
 4. Choose your project.
 5. Follow the instructions shown in the terminal.
 
-[![Watch the video](https://github.com/darmsDD/MicroROS-Scripts-with-STM32/blob/main/thumbnail.png)](https://github.com/darmsDD/MicroROS-Scripts-with-STM32/blob/main/STM32Microros.mp4)
+[![Stm32CubeIde and MicroROS](https://img.youtube.com/vi/LQszjlWqP4o/0.jpg)](https://www.youtube.com/watch?v=LQszjlWqP4o)
