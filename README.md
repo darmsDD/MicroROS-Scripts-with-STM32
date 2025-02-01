@@ -28,3 +28,8 @@ Repository dedicated to facilitating the integration of microROS and STM32
 | `stm32Cube_Functions.sh` | File with functions related to STM32, such as editing the `.ioc` file and the project properties.             |
 | `style.sh`               | File with functions related to stylization.                                                                  |
 | `extra_packages.repos`   | File with your extra packages for usage in micro-ROS. The control msgs come by default, with an added example package (`actuator_msgs`).|
+
+
+## Hardware Support
+
+- STM32G474RE
