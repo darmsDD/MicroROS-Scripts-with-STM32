@@ -16,7 +16,7 @@
 
 #Colors for text
 BBlack='\033[1;30m'       # Black
-BYellow='\033[1;33m'        # Blue
+BYellow='\033[1;33m'      # Yellow
 BPurple='\033[1;35m'      # Purple
 BRed='\033[1;31m'         # Red
 Color_Off='\033[0m'       # No color
@@ -30,63 +30,53 @@ stage_over_char="="
 #   Arguments:      1- The sentence to be printed.
 #                   2- Additional flag to echo.
 #====================================================================================
-Style_NormalWorld(){
+Style_NormalSentence(){
     echo -e $2 ${Color_Off}$1
 }
 
 
 #====================================================================================
-#   Description:    Prints a sentence in red. Used when something went wrong.
-#   Arguments:      1- The sentence to be printed.
-#                   2- Additional flag to echo.
-#====================================================================================
-Style_RedWord () {
-    echo -e $2 ${BRed}$1${Color_Off}
-}
-
-
-#====================================================================================
-#   Description:   Prints a sentence in black.
-#   Arguments:     1- The sentence to be printed.
-#                  2- Additional flag to echo.
-#====================================================================================
-Style_BlackWord () {
-    echo -e $2 ${BBlack}$1${Color_Off}
-}
-
-
-#====================================================================================
-#   Description:   Prints a sentence in green. Used when an operation was 
-#                   successfull.
-#   Arguments:     1- The sentence to be printed.
-#                   2- Additional flag to echo.
-#====================================================================================
-Style_GreenWord () {
-    echo -e $2 ${BGreen}$1${Color_Off}
-}
-
-
-#====================================================================================
-#   Description:   Prints a sentence in Yellow. Used as an alternative for 
-#                   Style_PurpleWord to print messages.
+#   Description:    Prints a sentence in a specific color, each color has a meaning.
+#   Arguments:      
+#                   1- Type of the sentence, with the following options:
+#                       1.1- error (prints sentence in red)
+#                       1.2- warning (prints sentence in purple)                        
+#                       1.3- important (prints sentence in cyan)
 #
-#   Arguments:     1- The sentence to be printed.
-#                  2- Additional flag to echo.
-#====================================================================================
-Style_YellowWord () {
-    echo -e $2 ${BYellow}$1${Color_Off}
-}
-
-
-#====================================================================================
-#   Description:    Prints a sentence in purple. Used as an alternative for 
-#                   Style_YellowWord to print messages. 
+#                   2- The sentence to be printed.
+#                   3- Additional flag to echo.
 #
-#   Arguments:      1- The sentence to be printed.
-#                   2- Additional flag to echo.
+#   Examples: 1- Style_Sentence error "Testing an error"
+#               Prints the message in red.
+#
+#            2- Style_Sentence warning "Testing a warning\n\n" -n
+#               Prints the message in yellow with 2 newlines (\n) after.
 #====================================================================================
-Style_PurpleWord () {
-    echo -e $2 ${BPurple}$1${Color_Off}
+Style_Sentence(){
+    shopt -s nocasematch  # Enable case-insensitive matching
+    case $1 in
+    error)
+        ChoosenColor=$BRed
+        ;;
+
+    warning)
+        ChoosenColor=$BPurple
+        ;;
+
+    important)
+        ChoosenColor=$BCyan
+        ;;
+
+    success)
+        ChoosenColor=$BGreen
+        ;;
+
+    *)
+        ChoosenColor=$Color_Off
+        ;;
+    esac
+    echo -e $3 ${ChoosenColor}$2${Color_Off}
+    shopt -u nocasematch  # Disable case-insensitive matching
 }
 
 #====================================================================================
@@ -94,6 +84,9 @@ Style_PurpleWord () {
 #   Arguments:      None
 #====================================================================================
 Style_StageOver (){
+    # Char used to indicate that a stage is over. tput cols returns the number of columns
+    # of the terminal window
+    repeated_char=$(printf "$stage_over_char%.0s" $(seq 1 $(tput cols))) 
 	echo  -e "${On_Black}$repeated_char${Color_Off}"
 	echo -e "${On_Black}$repeated_char${Color_Off}\n"
 }
@@ -147,5 +140,5 @@ Style_FormatMultilineVarForSed(){
 
 
 
-repeated_char=$(printf "$stage_over_char%.0s" $(seq 1 150)) # Char used to indicate that a stage is over.
+
 
