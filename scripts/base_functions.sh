@@ -32,8 +32,8 @@
 BaseFunctions_FindFolder() {
     local folder_path_to_inside=$1
     if [ ! -d $folder_path_to_inside ]; then
-        Style_PurpleWord "Directory not found." 
-        Style_YellowWord "To resolve, the following steps must be taken:\n"
+        Style_Sentence warning "Directory not found." 
+        Style_Sentence important "To resolve, the following steps must be taken:\n"
         if [ "$folder_path_to_inside" = "$micro_utils_folder_path_to_inside" ]; then
             local steps=("Clone micro utils repository" "Replace extra_packages.repos with your own" "Copy essential files to $stm32_project_path/Core/Src\n")
             BaseFunctions_AuthorizationInput BaseFunctions_CreateUtilsFolder "${steps[@]}"
@@ -42,7 +42,7 @@ BaseFunctions_FindFolder() {
             BaseFunctions_AuthorizationInput BaseFunctions_CreateMicroRosAgentFolder "${steps[@]}"
         fi
     else
-        Style_GreenWord "Directory found."
+        Style_Sentence success "Directory found."
     fi
 }
 
@@ -91,15 +91,15 @@ BaseFunctions_AuthorizationInput(){
     local i=1
     for var in "${steps[@]}"
     do
-        Style_NormalWorld "\t$i-$var\n"
+        Style_NormalSentence "\t$i-$var\n"
         ((i++))
     done
-    Style_YellowWord "Do you authorize the execution of the following steps:[Y/n]:" -n
+    Style_Sentence important "Do you authorize the execution of the following steps:[Y/n]:" -n
     read input
     if [ $input == "Y" ]; then
         $my_function
     else
-        Style_RedWord "Authorization was not granted."
+        Style_Sentence error "Authorization was not granted."
         BaseFunctions_TerminateProgram
     fi
     
@@ -118,10 +118,10 @@ BaseFunctions_ExecuteFunctionAndCheckError(){
     local arguments=(${@:2}) # take the arguments of the my_function
     $my_function $arguments # executes the function passed as argument
     if [[ "$?" = 0 ]]; then
-        Style_GreenWord "Success"
+        Style_Sentence success "Success"
     else
-        Style_RedWord "Something went wrong. Check the called functions:"
-        Style_PurpleWord "$my_function ${FUNCNAME[*]}"
+        Style_Sentence error "Something went wrong. Check the called functions:"
+        Style_Sentence important "$my_function ${FUNCNAME[*]}"
         BaseFunctions_TerminateProgram # performs the cleanup function in case of failure (removing files and so on that were created during the process).
     fi
 }
@@ -135,17 +135,19 @@ BaseFunctions_ExecuteFunctionAndCheckError(){
 #    Arguments:     None.
 # ==============================================================================================================================
 BaseFunctions_TerminateProgram(){
-    Style_YellowWord "\nRemoving $microROS_agent_folder_name and $micro_utils_folder_name. Do you authorize?[Y/n]:" -n
+    Style_Sentence important "\nRemoving $microROS_agent_folder_name and $micro_utils_folder_name. Do you authorize?[Y/n]:" -n
     read input
     if [ "$input" == "Y" ]; then
        #ExecuteFunctionAndCheckError $my_function $my_clean_up_function
        rm -rf $micro_utils_folder_path_to_inside
        rm -rf $microROS_agent_folder_name
     else
-        Style_RedWord "Authorization was not granted."
+        Style_Sentence important "Authorization was not granted."
     fi
-
-    Style_PurpleWord "Terminating Program"
+    # Disable case-insensitive matching. In case it is left turned on,
+    # by the function Style_Sentence
+    shopt -u nocasematch  
+    Style_Sentence important "Terminating Program"
     BaseFunctions_KillProcessTree $$
     wait
     exit
@@ -196,16 +198,14 @@ BaseFunctions_GenerateRandom10DigitNumber(){
 # ==============================================================================================================================
 BaseFunctions_SetWorkspaceAndProject(){
 
-    if dpkg-query -W zenity 2>/dev/null | grep -q "zenity"; then
-        Style_PurpleWord "Zenity is installed."
-    else
-        Style_YellowWord "Zenity is not installed."
+    if ! dpkg-query -W zenity 2>/dev/null | grep -q "zenity"; then
+        Style_Sentence warning "Zenity is not installed."
         install_zenity="sudo apt-get install zenity"
         local steps=("Install zenity")
         BaseFunctions_AuthorizationInput  "$install_zenity"  "${install_zenity}"
     fi
 
-    Style_YellowWord "Choose your project."
+    Style_Sentence important "Choose your project."
     choosen_project=$(zenity --file-selection --directory --title="Select a project" 2>/dev/null)
     stm32_workspace_name=$(dirname $choosen_project)
     stm32_project_name=$(basename $choosen_project)

@@ -28,7 +28,7 @@ MicroRos_InitialSetup() {
     cd $micro_ros_agent_path_to_inside
     rosdep install --from-path src --ignore-src -y --rosdistro $my_ros_distro
     if [ -d "src" ] && [ -d "build" ] && [ -d "install" ] && [ -d "log" ]; then
-        Style_PurpleWord "There is a current build. Skipping this step."
+        Style_Sentence important "There is a current build. Skipping this step."
     else
         colcon build
         colcon test
@@ -45,7 +45,7 @@ MicrosRos_AgentSetup(){
     cd $micro_ros_agent_path_to_inside
     if [ -f src/ros2.repos ]
     then
-        Style_PurpleWord "The setup was done previously. Skipping this step."
+        Style_Sentence important "The setup was done previously. Skipping this step."
     else
         ros2 run micro_ros_setup create_agent_ws.sh
         ros2 run micro_ros_setup build_agent.sh    
@@ -85,7 +85,7 @@ MicroRos_ChooseAnOption(){
 # =======================================================================================================================
 MicroRos_FindDistro(){
     # Use find to locate directories named 'ros'
-    Style_YellowWord "Finding Ros Distro"
+    Style_Sentence important "Finding Ros Distro"
     if [ -n $ROS_DISTRO ]; then
         echo "The variable ROS_DISTRO is not empty."
         my_ros_distro=$ROS_DISTRO
@@ -100,7 +100,7 @@ MicroRos_FindDistro(){
     # 1: search in the most common place, /opt/ros/
     for ros2_distro in ${ros2_distros[@]};
     do
-        Style_NormalWorld "Searching for $ros2_distro"
+        Style_NormalSentence "Searching for $ros2_distro"
         my_ros_distro=$(find /opt/ros/ -type d -name "$ros2_distro" 2>/dev/null)
         if [[ -n $my_ros_distro ]]; then 
             break 
@@ -110,7 +110,7 @@ MicroRos_FindDistro(){
     if [[ -z $my_ros_distro ]]; then
         for ros2_distro in ${ros2_distros[@]};
         do
-            Style_NormalWorld "Searching for $ros2_distro"
+            Style_NormalSentence "Searching for $ros2_distro"
             my_ros_distro=$(find / -type d -path "*/ros/$ros2_distro" 2>/dev/null)
             if [[ -n $my_ros_distro ]]; then 
                 break 
@@ -119,10 +119,10 @@ MicroRos_FindDistro(){
     fi
     # 3: If no distro was found, warn the user.
     if [[ -z $my_ros_distro ]]; then
-        Style_RedWord "No Ros2 distro was found. Install a ros2 distro. A list of Ros2 distros can be found bellow:\n"
+        Style_Sentence error "No Ros2 distro was found. Install a ros2 distro. A list of Ros2 distros can be found bellow:\n"
         for ros2_distro in ${ros2_distros[@]};
         do
-           Style_RedWord $ros2_distro
+           Style_Sentence error $ros2_distro
         done
         return ;
     fi
