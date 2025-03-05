@@ -8,7 +8,7 @@
 #                  
 # Author:          Ivan Diniz Dobbin (ivandinizdobbin2@gmail.com)
 # Date Created:    26/01/2025
-# Last Modified:   26/01/2025
+# Last Modified:   04/03/2025
 # Version:         1.0.0
 # =====================================================================
 # Notes:
@@ -27,7 +27,7 @@ MicroRos_InitialSetup() {
     MicroRos_FindDistro 
     cd $micro_ros_agent_path_to_inside
     rosdep install --from-path src --ignore-src -y --rosdistro $my_ros_distro
-    if [ -d "src" ] && [ -d "build" ] && [ -d "install" ] && [ -d "log" ]; then
+    if [ "$branch_name" != "main" ] && [ -d "src" ] && [ -d "build" ] && [ -d "install" ] && [ -d "log" ]; then
         Style_Sentence important "There is a current build. Skipping this step."
     else
         colcon build
@@ -43,7 +43,7 @@ MicroRos_InitialSetup() {
 #=======================================================================================================================
 MicrosRos_AgentSetup(){
     cd $micro_ros_agent_path_to_inside
-    if [ -f src/ros2.repos ]
+    if [ "$branch_name" != "main" ] && [ -f src/ros2.repos ]
     then
         Style_Sentence important "The setup was done previously. Skipping this step."
     else
@@ -54,29 +54,29 @@ MicrosRos_AgentSetup(){
 }
 
 
-#=======================================================================================================================
-#   Description:    Create a option menu and make the user choose one.
-#   Arguments:      The options in an array format.
-#=======================================================================================================================
-MicroRos_ChooseAnOption(){
-    options_array=($@)
-    for ((i = 0; i < $number_of_options; i++)); do
-        echo "($((i))): ${options_array[$i]}"
-    done
+# #=======================================================================================================================
+# #   Description:    Create a option menu and make the user choose one.
+# #   Arguments:      The options in an array format.
+# #=======================================================================================================================
+# MicroRos_ChooseAnOption(){
+#     options_array=($@)
+#     for ((i = 0; i < $number_of_options; i++)); do
+#         echo "($((i))): ${options_array[$i]}"
+#     done
 
-    while true; 
-    do
-        read -p "Select an option  (0-$((number_of_options -1))): " choosen_option
-        # Check if input is a number and then checks if it is inside of range 1 to number_of_options
-        if [[ $choosen_option =~ ^[0-9]+$ ]] && (($choosen_option >= 0  && $choosen_option<$number_of_options )); then
-            break;
-        else
-            echo "Invalid choice, try again."
-        fi
-    done
+#     while true; 
+#     do
+#         read -p "Select an option  (0-$((number_of_options -1))): " choosen_option
+#         # Check if input is a number and then checks if it is inside of range 1 to number_of_options
+#         if [[ $choosen_option =~ ^[0-9]+$ ]] && (($choosen_option >= 0  && $choosen_option<$number_of_options )); then
+#             break;
+#         else
+#             echo "Invalid choice, try again."
+#         fi
+#     done
 
 
-}
+# }
 
 
 # ======================================================================================================================= 
