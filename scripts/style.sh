@@ -51,6 +51,7 @@ Style_NormalSentence(){
 #
 #            2- Style_Sentence warning "Testing a warning\n\n" -n
 #               Prints the message in yellow with 2 newlines (\n) after.
+#   Notes: It is case insensitive, so ErrOr = error.
 #====================================================================================
 Style_Sentence(){
     shopt -s nocasematch  # Enable case-insensitive matching

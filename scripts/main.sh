@@ -26,7 +26,10 @@
 . ./stm32Cube_functions.sh # File with functions related to STM32, such as altering the .ioc file and the project properties.
 
 
-# Execute a cleanup function if user presses Ctrl+c
+
+branch_name=$(git rev-parse --abbrev-ref HEAD)
+
+#Execute a cleanup function if user presses Ctrl+c
 trap BaseFunctions_TerminateProgram SIGINT
 
 cd ..
@@ -64,8 +67,6 @@ Style_StageOver
 Style_StageInit "7- Changing .ioc file properties"
 BaseFunctions_ExecuteFunctionAndCheckError STM32Cube_AlterIOCProperties
 Style_StageOver
-
-
 
 
 # kill the descendents of the process
