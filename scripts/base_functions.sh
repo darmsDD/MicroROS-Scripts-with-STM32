@@ -135,15 +135,15 @@ BaseFunctions_ExecuteFunctionAndCheckError(){
 #    Arguments:     None.
 # ==============================================================================================================================
 BaseFunctions_TerminateProgram(){
-    Style_Sentence important "\nRemoving $microROS_agent_folder_name and $micro_utils_folder_name. Do you authorize?[Y/n]:" -n
-    read input
-    if [ "$input" == "Y" ]; then
-       #ExecuteFunctionAndCheckError $my_function $my_clean_up_function
-       rm -rf $micro_utils_folder_path_to_inside
-       rm -rf $microROS_agent_folder_name
-    else
-        Style_Sentence important "Authorization was not granted."
-    fi
+    # Style_Sentence important "\nRemoving $microROS_agent_folder_name and $micro_utils_folder_name. Do you authorize?[Y/n]:" -n
+    # read input
+    # if [ "$input" == "Y" ]; then
+    #    #ExecuteFunctionAndCheckError $my_function $my_clean_up_function
+    #    rm -rf $micro_utils_folder_path_to_inside
+    #    rm -rf $microROS_agent_folder_name
+    # else
+    #     Style_Sentence important "Authorization was not granted."
+    # fi
     # Disable case-insensitive matching. In case it is left turned on,
     # by the function Style_Sentence
     shopt -u nocasematch  
@@ -207,8 +207,10 @@ BaseFunctions_SetWorkspaceAndProject(){
 
     Style_Sentence important "Choose your project."
     choosen_project=$(zenity --file-selection --directory --title="Select a project" 2>/dev/null)
-    stm32_workspace_name=$(dirname $choosen_project)
-    stm32_project_name=$(basename $choosen_project)
+    stm32_workspace_name=$(dirname "$choosen_project")
+    stm32_project_name=$(basename "$choosen_project")
+    echo $stm32_workspace_name
+    echo $stm32_project_name
     . scripts/fixed_configuration.sh # File with configurations you should not change 
 
 }
