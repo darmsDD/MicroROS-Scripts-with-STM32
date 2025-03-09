@@ -61,7 +61,7 @@ Style_Sentence(){
         ;;
 
     warning)
-        ChoosenColor=$BPurple
+        ChoosenColor=$BYellow
         ;;
 
     important)
@@ -101,7 +101,7 @@ Style_StageOver (){
 #                  2- Additional flag to echo.
 #====================================================================================
 Style_StageInit(){
-    echo -e $2 ${BYellow}$1"\n"${Color_Off} 
+    echo -e $2 ${BPurple}$1"\n"${Color_Off} 
 }
 
 
@@ -113,7 +113,7 @@ Style_StageInit(){
 #                   2- Additional flag to echo.
 #====================================================================================
 Style_SubStageInit(){
-    echo -e $2 "\t"${BYellow}$1"\n"${Color_Off} 
+    echo -e $2 "\t"${BPurple}$1"\n"${Color_Off} 
 }
 
 
