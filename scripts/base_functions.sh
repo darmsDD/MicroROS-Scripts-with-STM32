@@ -129,21 +129,11 @@ BaseFunctions_ExecuteFunctionAndCheckError(){
 
 # ==============================================================================================================================
 #    Description:   Terminates the program in case of error or user pressing Ctrl+c.
-#                   It asks the user if it can remove the micro_ros_stm32cubemx_utils and micro Ros agent folder, kills all
-#                   child processes and finalize the program.    
+#                   Kills all child processes and finalize the program.    
 #
 #    Arguments:     None.
 # ==============================================================================================================================
 BaseFunctions_TerminateProgram(){
-    # Style_Sentence important "\nRemoving $microROS_agent_folder_name and $micro_utils_folder_name. Do you authorize?[Y/n]:" -n
-    # read input
-    # if [ "$input" == "Y" ]; then
-    #    #ExecuteFunctionAndCheckError $my_function $my_clean_up_function
-    #    rm -rf $micro_utils_folder_path_to_inside
-    #    rm -rf $microROS_agent_folder_name
-    # else
-    #     Style_Sentence important "Authorization was not granted."
-    # fi
     # Disable case-insensitive matching. In case it is left turned on,
     # by the function Style_Sentence
     shopt -u nocasematch  
@@ -198,6 +188,8 @@ BaseFunctions_GenerateRandom10DigitNumber(){
 # ==============================================================================================================================
 BaseFunctions_SetWorkspaceAndProject(){
 
+    isDockerInstalled
+
     if ! dpkg-query -W zenity 2>/dev/null | grep -q "zenity"; then
         Style_Sentence warning "Zenity is not installed."
         install_zenity="sudo apt-get install zenity"
@@ -209,8 +201,18 @@ BaseFunctions_SetWorkspaceAndProject(){
     choosen_project=$(zenity --file-selection --directory --title="Select a project" 2>/dev/null)
     stm32_workspace_name=$(dirname "$choosen_project")
     stm32_project_name=$(basename "$choosen_project")
-    echo $stm32_workspace_name
-    echo $stm32_project_name
     . scripts/fixed_configuration.sh # File with configurations you should not change 
 
+}
+
+# ==============================================================================================================================
+#    Description:   Checks if docker is installed, if not, terminates the program.
+#    Arguments:     None.
+# ==============================================================================================================================
+isDockerInstalled(){
+    if [ ! -x "$(command -v docker)" ]; then
+        Style_Sentence error "Docker is not installed"
+        Style_Sentence error "Please install docker and then try running main.sh."
+        BaseFunctions_TerminateProgram   
+    fi
 }
